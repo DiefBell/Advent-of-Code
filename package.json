@@ -8,6 +8,8 @@
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
-  "scripts": {
+  "scripts": {},
+  "dependencies": {
+    "@dief/prefs": "github:DiefBell/prefs"
   }
 }
