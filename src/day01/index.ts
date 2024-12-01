@@ -50,8 +50,9 @@ const inputPath = join(__dirname, "input.txt");
 const rawInput = readFileSync(inputPath, "utf-8");
 const input = parseInputFile(rawInput);
 
-const left = radixSort(input[0]);
-const right = radixSort(input[1]);
+// Frozen so I don't accidentally modify between tasks
+const left = Object.freeze(radixSort(input[0]));
+const right = Object.freeze(radixSort(input[1]));
 
 const task01 = () =>
 {
