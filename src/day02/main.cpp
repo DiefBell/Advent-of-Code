@@ -51,22 +51,30 @@ std::vector<int> splitAndParse(const std::string &input)
  */
 bool is_safe(Report report)
 {
-	int prevDiff;
+	std::vector<int> diffs;
 	for(size_t i = 1; i < report.size(); i++)
 	{
 		int diff = report[i] - report[i-1];
+		diffs.push_back(diff);
+	}
+
+	bool dampenerUsed = false;
+	for(size_t i = 0; i < diffs.size(); i++)
+	{
+		int diff = diffs[i];
 
 		if(std::abs(diff) < 1 || std::abs(diff) > 3)
 		{
 			return false;
 		}
-		
-		// Special case: if this is the very first element
-		if(i == 1)
+
+		// Special case: there's no "previous" diff for first element
+		if(i == 0)
 		{
-			prevDiff = diff;
 			continue;
 		}
+
+		int prevDiff = diffs[i-1];
 
 		// check signs aren't different
 		if(prevDiff < 0 != diff < 0)
