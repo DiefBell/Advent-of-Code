@@ -52,23 +52,23 @@ std::vector<int> splitAndParse(const std::string &input)
 bool is_safe(Report report, bool allowDampener)
 {
 	std::vector<int> diffs;
-	for(int i = 1; i < report.size(); i++)
+	for (int i = 1; i < report.size(); i++)
 	{
-		int diff = report[i] - report[i-1];
+		int diff = report[i] - report[i - 1];
 		diffs.push_back(diff);
 	}
 
 	// Element we're testing we could remove
 	int dampenedLevel = -1;
 
-	for(int i = 0; i < diffs.size(); i++)
+	for (int i = 0; i < diffs.size(); i++)
 	{
 		int diff = diffs[i];
 
 		bool dampenerUsed = dampenedLevel != -1;
-		if(std::abs(diff) < 1 || std::abs(diff) > 3)
+		if (std::abs(diff) < 1 || std::abs(diff) > 3)
 		{
-			if(dampenerUsed || !allowDampener)
+			if (dampenerUsed || !allowDampener)
 			{
 				return false;
 			}
@@ -79,16 +79,16 @@ bool is_safe(Report report, bool allowDampener)
 
 		// Special case: there's no "previous" diff for first element,
 		// nor the second if the first is dampened
-		if(i == 0 || (i == 1 && dampenedLevel == 0) )
+		if (i == 0 || (i == 1 && dampenedLevel == 0))
 		{
 			continue;
 		}
 
 		bool usingDampener = i - 1 == dampenedLevel;
 		int prevDiff;
-		if(usingDampener)
+		if (usingDampener)
 		{
-			prevDiff = diffs[i-2];
+			prevDiff = diffs[i - 2];
 			// If we're using the dampener then the current diff becomes relative
 			// to the element before the dampened one
 			diff = diff + diffs[i - 1];
@@ -96,13 +96,13 @@ bool is_safe(Report report, bool allowDampener)
 		}
 		else
 		{
-			prevDiff = diffs[i-1];
+			prevDiff = diffs[i - 1];
 		}
 
 		// check signs aren't different
-		if(prevDiff < 0 != diff < 0)
+		if (prevDiff < 0 != diff < 0)
 		{
-			if(dampenerUsed || !allowDampener)
+			if (dampenerUsed || !allowDampener)
 			{
 				return false;
 			}
@@ -113,34 +113,38 @@ bool is_safe(Report report, bool allowDampener)
 	return true;
 }
 
-void task01(std::vector<Report> reports)
+int task01(std::vector<Report> reports)
 {
 	int safeReports = 0;
-	for(int i = 0; i < reports.size(); i++)
+	for (int i = 0; i < reports.size(); i++)
 	{
 		Report report = reports[i];
-		if(is_safe(report, false))
+		if (is_safe(report, false))
 		{
 			safeReports++;
 		}
 	}
 
 	std::cout << "Number of safe reports without dampening: " << safeReports << std::endl;
+
+	return safeReports;
 }
 
-void task02(std::vector<Report> reports)
+int task02(std::vector<Report> reports)
 {
 	int safeReports = 0;
-	for(int i = 0; i < reports.size(); i++)
+	for (int i = 0; i < reports.size(); i++)
 	{
 		Report report = reports[i];
-		if(is_safe(report, true))
+		if (is_safe(report, true))
 		{
 			safeReports++;
 		}
 	}
 
 	std::cout << "Number of safe reports with dampening: " << safeReports << std::endl;
+
+	return safeReports;
 }
 
 int main()
@@ -156,8 +160,13 @@ int main()
 		reports.push_back(report);
 	}
 
-	task01(reports);
-	task02(reports);
+	int sr1 = task01(reports);
+	int sr2 = task02(reports);
+
+	if (sr1 > sr2)
+	{
+		std::cout << "Somehow there are more safe reports WITHOUT dampening... WTF??" << std::endl;
+	}
 
 	return 0;
 }
