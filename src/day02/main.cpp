@@ -6,7 +6,7 @@
 #include <algorithm>
 #include "main.hpp"
 
-// #define TEST
+#define TEST
 
 namespace AdventOfCode2024 {
 namespace Day02 {
@@ -113,7 +113,7 @@ int main() {
 
     std::ifstream inputFile(
 #ifdef TEST
-        "input.test.txt"
+        "input.esina.txt"
 #else
         "input.txt"
 #endif
