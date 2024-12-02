@@ -53,6 +53,7 @@
 		"fstream": "cpp",
 		"string": "cpp",
 		"sstream": "cpp",
-		"vector": "cpp"
+		"vector": "cpp",
+		"algorithm": "cpp"
 	}
 }

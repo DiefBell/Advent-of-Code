@@ -9,7 +9,9 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+				"-std=c++17",
+				"-mconsole"
             ],
             "options": {
                 "cwd": "${fileDirname}"

@@ -1,172 +1,132 @@
-#include <stdio.h>
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <sstream>
 #include <vector>
 #include <cmath>
+#include <algorithm>
+#include "main.hpp"
 
-#define Report std::vector<int>
+// #define TEST
 
-/**
- * @brief Splits a string by spaces, parses the substrings into integers, and returns them as a vector.
- *
- * This function takes a space-separated string of numbers, splits it into individual tokens,
- * converts each token to an integer, and stores the integers in a vector. Invalid tokens
- * (non-numeric or out-of-range values) are skipped, and a warning is printed to the standard error stream.
- *
- * @param input The input string containing space-separated numbers.
- * @return A vector of integers parsed from the input string.
- *
- * @note If a token cannot be converted to an integer, it is ignored, and a warning message is printed.
- */
-std::vector<int> splitAndParse(const std::string &input)
-{
-	Report report;
-	std::istringstream stream(input);
-	std::string token;
+namespace AdventOfCode2024 {
+namespace Day02 {
 
-	while (stream >> token)
-	{ // Extract tokens separated by spaces
-		try
-		{
-			report.push_back(std::stoi(token)); // Convert token to integer and add to result
-		}
-		catch (const std::invalid_argument &e)
-		{
-			std::cerr << "Invalid number: " << token << std::endl;
-		}
-		catch (const std::out_of_range &e)
-		{
-			std::cerr << "Number out of range: " << token << std::endl;
-		}
-	}
-	return report;
+using Report = std::vector<int>;
+
+std::vector<int> splitAndParse(const std::string &input) {
+    Report report;
+    std::istringstream stream(input);
+    std::string token;
+
+    while (stream >> token) {
+        try {
+            report.push_back(std::stoi(token));
+        } catch (const std::invalid_argument &) {
+            std::cerr << "Invalid number: " << token << std::endl;
+        } catch (const std::out_of_range &) {
+            std::cerr << "Number out of range: " << token << std::endl;
+        }
+    }
+    return report;
 }
 
-/**
- * A report only counts as safe if both of the following are true:
- *   - The levels are either all increasing or all decreasing.
- *   - Any two adjacent levels differ by at least one and at most three.
- */
-bool is_safe(Report report, bool allowDampener)
+Report copy_report_without_element(Report report, int index)
 {
-	std::vector<int> diffs;
-	for (int i = 1; i < report.size(); i++)
+	Report newReport;
+	newReport.reserve(report.size() - 1);
+
+	for(int i = 0; i < report.size(); i++)
 	{
-		int diff = report[i] - report[i - 1];
-		diffs.push_back(diff);
+		if(i != index)
+		{
+			newReport.push_back(report[i]);
+		}
 	}
 
-	// Element we're testing we could remove
-	int dampenedLevel = -1;
+	return newReport;
+}
 
-	for (int i = 0; i < diffs.size(); i++)
-	{
-		int diff = diffs[i];
+bool is_safe(Report report, bool allowDampening) {
+    int prevDiff;
+    for (int i = 1; i < report.size(); i++) {
+        int diff = report[i] - report[i - 1];
 
-		bool dampenerUsed = dampenedLevel != -1;
-		if (std::abs(diff) < 1 || std::abs(diff) > 3)
-		{
-			if (dampenerUsed || !allowDampener)
-			{
-				return false;
-			}
+        if (std::abs(diff) < 1 || std::abs(diff) > 3) {
+            if (!allowDampening) return false;
+            return is_safe(copy_report_without_element(report, i-1), false)
+				|| is_safe(copy_report_without_element(report, i), false)
+				// Special case where we may want to remove the very first element
+				|| (i == 2 && is_safe(copy_report_without_element(report, i-2), false));
+        }
 
-			dampenedLevel = i;
-			continue;
-		}
+        if (i == 1) {
+            prevDiff = diff;
+            continue;
+        }
+        if ((prevDiff < 0) != (diff < 0)) {
+            if (!allowDampening) return false;
+            return is_safe(copy_report_without_element(report, i-1), false)
+				|| is_safe(copy_report_without_element(report, i), false)
+				// Special case where we may want to remove the very first element
+				|| (i == 2 && is_safe(copy_report_without_element(report, i-2), false));
+        }
+        prevDiff = diff;
+    }
+    return true;
+}
 
-		// Special case: there's no "previous" diff for first element,
-		// nor the second if the first is dampened
-		if (i == 0 || (i == 1 && dampenedLevel == 0))
-		{
-			continue;
-		}
+int task01(std::vector<Report> reports) {
+    int safeReports = 0;
+    for (int i = 0; i < reports.size(); i++) {
+        if (is_safe(reports[i], false)) {
+            // std::cout << "Safe report: " << i << std::endl;
+            safeReports++;
+        }
+    }
+    std::cout << "Number of safe reports without dampening: " << safeReports << std::endl;
+    return safeReports;
+}
 
-		bool usingDampener = i - 1 == dampenedLevel;
-		int prevDiff;
-		if (usingDampener)
-		{
-			prevDiff = diffs[i - 2];
-			// If we're using the dampener then the current diff becomes relative
-			// to the element before the dampened one
-			diff = diff + diffs[i - 1];
-			diffs[i] = diff;
-		}
+int task02(std::vector<Report> reports) {
+    int safeReports = 0;
+    for (int i = 0; i < reports.size(); i++) {
+        if (is_safe(reports[i], true)) {
+            // std::cout << "Safe report: " << i << std::endl;
+            safeReports++;
+        }
 		else
 		{
-			prevDiff = diffs[i - 1];
+			std::cout << "Unsafe report: " << i << std::endl;
 		}
-
-		// check signs aren't different
-		if (prevDiff < 0 != diff < 0)
-		{
-			if (dampenerUsed || !allowDampener)
-			{
-				return false;
-			}
-			dampenedLevel = i;
-		}
-	}
-
-	return true;
+    }
+    std::cout << "Number of safe reports with dampening: " << safeReports << std::endl;
+    return safeReports;
 }
 
-int task01(std::vector<Report> reports)
-{
-	int safeReports = 0;
-	for (int i = 0; i < reports.size(); i++)
-	{
-		Report report = reports[i];
-		if (is_safe(report, false))
-		{
-			safeReports++;
-		}
-	}
+} // namespace Day02
+} // namespace AdventOfCode2024
 
-	std::cout << "Number of safe reports without dampening: " << safeReports << std::endl;
 
-	return safeReports;
-}
+int main() {
+	// clear crap at start of console
+	std::cout << "-\n-\n" << std::endl;
 
-int task02(std::vector<Report> reports)
-{
-	int safeReports = 0;
-	for (int i = 0; i < reports.size(); i++)
-	{
-		Report report = reports[i];
-		if (is_safe(report, true))
-		{
-			safeReports++;
-		}
-	}
+    std::ifstream inputFile(
+#ifdef TEST
+        "input.test.txt"
+#else
+        "input.txt"
+#endif
+    );
+    std::string fileLine;
+    std::vector<AdventOfCode2024::Day02::Report> reports;
 
-	std::cout << "Number of safe reports with dampening: " << safeReports << std::endl;
+    while (getline(inputFile, fileLine)) {
+        reports.push_back(AdventOfCode2024::Day02::splitAndParse(fileLine));
+    }
 
-	return safeReports;
-}
+    // int sr1 = AdventOfCode2024::Day02::task01(reports);
+    int sr2 = AdventOfCode2024::Day02::task02(reports);
 
-int main()
-{
-	std::ifstream inputFile("input.txt");
-	std::string fileLine;
-
-	std::vector<Report> reports;
-
-	while (getline(inputFile, fileLine))
-	{
-		Report report = splitAndParse(fileLine);
-		reports.push_back(report);
-	}
-
-	int sr1 = task01(reports);
-	int sr2 = task02(reports);
-
-	if (sr1 > sr2)
-	{
-		std::cout << "Somehow there are more safe reports WITHOUT dampening... WTF??" << std::endl;
-	}
-
-	return 0;
+    return 0;
 }
