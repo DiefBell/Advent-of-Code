@@ -52,34 +52,61 @@ std::vector<int> splitAndParse(const std::string &input)
 bool is_safe(Report report)
 {
 	std::vector<int> diffs;
-	for(size_t i = 1; i < report.size(); i++)
+	for(int i = 1; i < report.size(); i++)
 	{
 		int diff = report[i] - report[i-1];
 		diffs.push_back(diff);
 	}
 
-	bool dampenerUsed = false;
-	for(size_t i = 0; i < diffs.size(); i++)
+	// Element we're testing we could remove
+	int dampenedLevel = -1;
+
+	for(int i = 0; i < diffs.size(); i++)
 	{
 		int diff = diffs[i];
 
+		bool dampenerUsed = dampenedLevel != -1;
 		if(std::abs(diff) < 1 || std::abs(diff) > 3)
 		{
-			return false;
+			if(dampenerUsed)
+			{
+				return false;
+			}
+
+			dampenedLevel = i;
+			continue;
 		}
 
-		// Special case: there's no "previous" diff for first element
-		if(i == 0)
+		// Special case: there's no "previous" diff for first element,
+		// nor the second if the first is dampened
+		if(i == 0 || (i == 1 && dampenedLevel == 0) )
 		{
 			continue;
 		}
 
-		int prevDiff = diffs[i-1];
+		bool usingDampener = i - 1 == dampenedLevel;
+		int prevDiff;
+		if(usingDampener)
+		{
+			prevDiff = diffs[i-2];
+			// If we're using the dampener then the current diff becomes relative
+			// to the element before the dampened one
+			diff = diff + diffs[i - 1];
+			diffs[i] = diff;
+		}
+		else
+		{
+			prevDiff = diffs[i-1];
+		}
 
 		// check signs aren't different
 		if(prevDiff < 0 != diff < 0)
 		{
-			return false;
+			if(dampenerUsed)
+			{
+				return false;
+			}
+			dampenedLevel = i;
 		}
 
 		prevDiff = diff;
@@ -102,7 +129,7 @@ int main()
 	}
 
 	int safeReports = 0;
-	for(size_t i = 0; i < reports.size(); i++)
+	for(int i = 0; i < reports.size(); i++)
 	{
 		Report report = reports[i];
 		if(is_safe(report))
