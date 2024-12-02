@@ -29,6 +29,17 @@
 			"request": "launch",
 			"program": "${file}",
 			"console": "integratedTerminal"
-		}
+		},
+		{
+            "name": "C# (.NET Core)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build C# Project",
+            "program": "${workspaceFolder}/src/day04/bin/Debug/net9.0/day04.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/day04",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
+        }
 	]
 }

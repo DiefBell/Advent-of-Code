@@ -5,6 +5,7 @@
 	"eslint.validate": [
 		"typescript"
 	],
+	"csharp.preview.improvedLaunchExperience": true,
 	"files.associations": {
 		"pre-commit": "shellscript",
 		"pre-push": "shellscript",
@@ -55,5 +56,6 @@
 		"sstream": "cpp",
 		"vector": "cpp",
 		"algorithm": "cpp"
-	}
+	},
+	"dotnet.defaultSolution": "day04.sln"
 }
