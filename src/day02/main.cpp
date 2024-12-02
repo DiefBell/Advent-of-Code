@@ -49,7 +49,7 @@ std::vector<int> splitAndParse(const std::string &input)
  *   - The levels are either all increasing or all decreasing.
  *   - Any two adjacent levels differ by at least one and at most three.
  */
-bool is_safe(Report report)
+bool is_safe(Report report, bool allowDampener)
 {
 	std::vector<int> diffs;
 	for(int i = 1; i < report.size(); i++)
@@ -68,7 +68,7 @@ bool is_safe(Report report)
 		bool dampenerUsed = dampenedLevel != -1;
 		if(std::abs(diff) < 1 || std::abs(diff) > 3)
 		{
-			if(dampenerUsed)
+			if(dampenerUsed || !allowDampener)
 			{
 				return false;
 			}
@@ -102,17 +102,45 @@ bool is_safe(Report report)
 		// check signs aren't different
 		if(prevDiff < 0 != diff < 0)
 		{
-			if(dampenerUsed)
+			if(dampenerUsed || !allowDampener)
 			{
 				return false;
 			}
 			dampenedLevel = i;
 		}
-
-		prevDiff = diff;
 	}
 
 	return true;
+}
+
+void task01(std::vector<Report> reports)
+{
+	int safeReports = 0;
+	for(int i = 0; i < reports.size(); i++)
+	{
+		Report report = reports[i];
+		if(is_safe(report, false))
+		{
+			safeReports++;
+		}
+	}
+
+	std::cout << "Number of safe reports without dampening: " << safeReports << std::endl;
+}
+
+void task02(std::vector<Report> reports)
+{
+	int safeReports = 0;
+	for(int i = 0; i < reports.size(); i++)
+	{
+		Report report = reports[i];
+		if(is_safe(report, true))
+		{
+			safeReports++;
+		}
+	}
+
+	std::cout << "Number of safe reports with dampening: " << safeReports << std::endl;
 }
 
 int main()
@@ -128,17 +156,8 @@ int main()
 		reports.push_back(report);
 	}
 
-	int safeReports = 0;
-	for(int i = 0; i < reports.size(); i++)
-	{
-		Report report = reports[i];
-		if(is_safe(report))
-		{
-			safeReports++;
-		}
-	}
-
-	std::cout << "Number of safe reports: " << safeReports << std::endl;
+	task01(reports);
+	task02(reports);
 
 	return 0;
 }
