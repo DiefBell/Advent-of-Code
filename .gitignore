@@ -174,7 +174,5 @@ dist
 # Finder (MacOS) folder config
 .DS_Store
 
-## Other
-*.exe
-**/bin
-**/obj
+# .NET likes to shove stuff in the root sometimes
+bin

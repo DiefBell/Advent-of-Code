@@ -5,6 +5,10 @@
 	"eslint.validate": [
 		"typescript"
 	],
+	"[dockerfile]": {
+		"editor.insertSpaces": true,
+		"editor.tabSize": 4
+	},
 	"csharp.preview.improvedLaunchExperience": true,
 	"files.associations": {
 		"pre-commit": "shellscript",
@@ -58,5 +62,7 @@
 		"algorithm": "cpp"
 	},
 	"dotnet.defaultSolution": "day04.sln",
-	"python.analysis.typeCheckingMode": "basic"
+	"python.analysis.typeCheckingMode": "basic",
+	"python.defaultInterpreterPath": "/usr/bin/python3.13",
+	"FSharp.suggestGitignore": false
 }

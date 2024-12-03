@@ -94,10 +94,6 @@ int task02(std::vector<Report> reports) {
             // std::cout << "Safe report: " << i << std::endl;
             safeReports++;
         }
-		else
-		{
-			std::cout << "Unsafe report: " << i << std::endl;
-		}
     }
     std::cout << "Number of safe reports with dampening: " << safeReports << std::endl;
     return safeReports;
@@ -125,8 +121,11 @@ int main() {
         reports.push_back(AdventOfCode2024::Day02::splitAndParse(fileLine));
     }
 
-    // int sr1 = AdventOfCode2024::Day02::task01(reports);
+    int sr1 = AdventOfCode2024::Day02::task01(reports);
     int sr2 = AdventOfCode2024::Day02::task02(reports);
+
+	// pad out end of console
+	std::cout << "\n-\n-" << std::endl;
 
     return 0;
 }

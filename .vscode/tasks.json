@@ -2,16 +2,15 @@
 	"tasks": [
 		{
 			"type": "cppbuild",
-			"label": "C/C++: g++.exe build active file",
-			"command": "C:\\ProgramData\\chocolatey\\bin\\g++.exe",
+			"label": "C/C++: g++ build active file",
+			"command": "g++",
 			"args": [
 				"-fdiagnostics-color=always",
 				"-g",
 				"${file}",
 				"-o",
-				"${fileDirname}\\${fileBasenameNoExtension}.exe",
-				"-std=c++17",
-				"-mconsole"
+				"${fileDirname}/bin/${fileBasenameNoExtension}.out",
+				"-std=c++17"
 			],
 			"options": {
 				"cwd": "${fileDirname}"
@@ -44,10 +43,11 @@
 		{
 			"label": "Compile Java",
 			"type": "shell",
-			"command": "powershell",
+			"command": "javac",
 			"args": [
-				"-Command",
-				"$path = \"${file}\"; $path = $path -replace \"\\\\\", \"/\"; javac -d bin $path"
+				"-d",
+				"bin",
+				"${file}"
 			],
 			"group": {
 				"kind": "build",

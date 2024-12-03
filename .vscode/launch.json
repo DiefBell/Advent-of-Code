@@ -18,10 +18,14 @@
 			"name": "C++",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${fileDirname}/${fileBasenameNoExtension}.exe",
+			"program": "${fileDirname}/bin/${fileBasenameNoExtension}.out",
 			"cwd": "${fileDirname}",
-			"preLaunchTask": "C/C++: g++.exe build active file",
-			"stopAtEntry": false
+			"preLaunchTask": "C/C++: g++ build active file",
+			"stopAtEntry": false,
+			"linux": {
+				"MIMode": "gdb",
+				"miDebuggerPath": "/usr/bin/gdb"
+			}
 		},
 		{
 			"name": "Python",

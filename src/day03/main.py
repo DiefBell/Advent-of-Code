@@ -41,5 +41,7 @@ def part_two(fileContent: str):
 if __name__ == "__main__":
 	f = open(INPUT_FILE, "r")
 	file_content = f.read()
+	print("")
 	part_one(file_content)
 	part_two(file_content)
+	print("")

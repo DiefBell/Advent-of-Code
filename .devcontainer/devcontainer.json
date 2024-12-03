@@ -1,0 +1,45 @@
+{
+    "name": "MySQL-Bun-Node",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "BUN_VERSION": "1.1.26",
+			"NODE_VERSION": "20.17.0"
+        }
+    },
+	"runArgs": [
+	],
+	"appPort": [
+	],
+	"mounts": [
+		"type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/root/.ssh,readonly"
+	],
+	"containerEnv": {
+		"DATABASE_PASS": "MyPassword",
+		"MYSQL_DATABASE": "gymbuddyfinder"
+	},
+    "customizations": {
+        "vscode": {
+            "extensions": [
+				"dbaeumer.vscode-eslint",
+				"golang.go",
+				"mhutchie.git-graph",
+				"ms-azuretools.vscode-docker",
+				"ms-dotnettools.csdevkit",
+				"ms-dotnettools.vscode-dotnet-pack",
+				"ms-python.debugpy",
+				"ms-python.python",
+				"ms-vscode.cpptools-extension-pack",
+				"mylesmurphy.prettify-ts",
+				"oracle.oracle-java",
+				"oven.bun-vscode",
+				"pandy.bun",
+				"riccardonovaglia.missinglineendoffile",
+				"s-vscode-remote.remote-containers",
+				"tamasfe.even-better-toml",
+				"vscjava.vscode-java-pack",
+				"yoavbls.pretty-ts-errors"
+            ]
+        }
+    }
+}
