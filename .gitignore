@@ -176,6 +176,5 @@ dist
 
 ## Other
 *.exe
-**/bin/Debug
-**/bin/Release
+**/bin
 **/obj
