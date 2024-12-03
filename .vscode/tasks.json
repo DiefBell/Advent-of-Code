@@ -38,7 +38,26 @@
 			"options": {
 				"cwd": "${fileDirname}"
 			}
-        }
+        },
+		{
+			"label": "Compile Java",
+			"type": "shell",
+			"command": "javac",
+			"args": [
+			  "-d",
+			  "bin",
+			  "${file}"
+			],
+			"group": {
+			  "kind": "build",
+			  "isDefault": true
+			},
+			"problemMatcher": ["$javac"],
+			"detail": "Compiles a Java file into the bin directory",
+			"options": {
+				"cwd": "${fileDirname}"
+			}
+		  }
     ],
     "version": "2.0.0"
 }

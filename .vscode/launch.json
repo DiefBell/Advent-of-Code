@@ -40,6 +40,16 @@
             "cwd": "${workspaceFolder}/src/day04",
             "stopAtEntry": false,
             "console": "integratedTerminal"
-        }
+        },
+		{
+			"type": "java",
+			"name": "Run Java",
+			"request": "launch",
+			"mainClass": "${fileBasenameNoExtension}",
+			"cwd": "${workspaceFolder}",
+			"console": "integratedTerminal",
+			"preLaunchTask": "Compile Java",
+			"args": []
+		  }
 	]
 }
