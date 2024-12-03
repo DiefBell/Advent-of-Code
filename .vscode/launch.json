@@ -40,7 +40,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "Build C# Project",
-            "program": "${fileDirname}/bin/Debug/net9.0/${fileBasenameNoExtension}.dll",
+            "program": "${fileDirname}/bin/Debug/net9.0/${fileDirnameBasename}.dll",
             "args": [],
             "cwd": "${fileDirname}",
             "stopAtEntry": false,
