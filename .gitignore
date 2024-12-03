@@ -175,4 +175,6 @@ dist
 .DS_Store
 
 # .NET likes to shove stuff in the root sometimes
-bin
+*.sln
+./bin
+./obj

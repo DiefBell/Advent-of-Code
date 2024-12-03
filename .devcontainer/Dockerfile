@@ -4,8 +4,10 @@ SHELL ["/bin/bash", "-c"]
 
 # Install Ubuntu packages, then clean up
 RUN apt update \
+    # Need this package before we can add these apt repos
     && apt install -y software-properties-common \
     && add-apt-repository -y ppa:deadsnakes/ppa \
+    && add-apt-repository -y ppa:longsleep/golang-backports \
     && apt update
 RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
         git \
@@ -17,7 +19,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
         unzip \
         ca-certificates \
         nano \
-        golang-go \
+        golang-1.21 \
         g++ \
         gdb \
         openjdk-17-jdk \
@@ -44,3 +46,9 @@ RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh \
     && rm ./dotnet-install.sh \
     && echo "export \"DOTNET_ROOT=\$HOME/.dotnet\"" >> ~/.bashrc \
     && echo "export \"PATH=\$PATH:\$DOTNET_ROOT:\$DOTNET_ROOT/tools\"" >> ~/.bashrc
+
+# Setup Go version
+RUN update-alternatives --install /usr/bin/go go /usr/lib/go-1.21/bin/go 1 \
+    && update-alternatives --install /usr/bin/gofmt gofmt /usr/lib/go-1.21/bin/gofmt 1 \
+    && go install github.com/go-delve/delve/cmd/dlv@latest \
+    && echo "export PATH=\"\$HOME/go/bin:\$PATH\"" >> ~/.bashrc
