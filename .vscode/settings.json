@@ -57,5 +57,6 @@
 		"vector": "cpp",
 		"algorithm": "cpp"
 	},
-	"dotnet.defaultSolution": "day04.sln"
+	"dotnet.defaultSolution": "day04.sln",
+	"python.analysis.typeCheckingMode": "basic"
 }
