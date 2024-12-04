@@ -90,6 +90,12 @@
 					"ignoreFailures": true
 				}
 			]
-		}
+		},
+		{
+            "name": "R: Debug file",
+            "type": "R-Debugger",
+            "request": "launch",
+            "file": "${file}"
+        }
 	]
 }

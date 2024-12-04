@@ -10,37 +10,31 @@ RUN apt update \
     && add-apt-repository -y ppa:longsleep/golang-backports \
     && apt update
 RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
-        git \
-        curl \
-        wget \
-        apt-transport-https \
-        software-properties-common \
-        zip \
-        unzip \
-        ca-certificates \
-        nano \
-        golang-1.21 \
-        g++ \
-        gdb \
-        openjdk-17-jdk \
-        python3.13 \
-        gnucobol \
-    && apt auto-remove -y \
-    && apt clean -y;
+    git \
+    curl \
+    wget \
+    apt-transport-https \
+    software-properties-common \
+    zip \
+    unzip \
+    ca-certificates \
+    nano
 
-# Install Node Version Manager
-RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
 
-# Install Node using NVM
-ARG NODE_VERSION
-RUN source /root/.nvm/nvm.sh && nvm install ${NODE_VERSION}
-RUN source /root/.nvm/nvm.sh && nvm use ${NODE_VERSION}
-
-# Install Bun
+# TypeScript
 ARG BUN_VERSION
 RUN curl -fsSL https://bun.sh/install | bash -s "bun-v${BUN_VERSION}"
 
-# .NET SDK
+# C++
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    g++ \
+    gdb
+
+# Python
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    python3.13
+
+# C#
 RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh \
     && chmod +x ./dotnet-install.sh \
     && ./dotnet-install.sh --channel 9.0 \
@@ -48,8 +42,28 @@ RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh \
     && echo "export \"DOTNET_ROOT=\$HOME/.dotnet\"" >> ~/.bashrc \
     && echo "export \"PATH=\$PATH:\$DOTNET_ROOT:\$DOTNET_ROOT/tools\"" >> ~/.bashrc
 
-# Setup Go version
+# Java
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    openjdk-17-jdk
+
+# Go
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    golang-1.21
 RUN update-alternatives --install /usr/bin/go go /usr/lib/go-1.21/bin/go 1 \
     && update-alternatives --install /usr/bin/gofmt gofmt /usr/lib/go-1.21/bin/gofmt 1 \
     && go install github.com/go-delve/delve/cmd/dlv@latest \
     && echo "export PATH=\"\$HOME/go/bin:\$PATH\"" >> ~/.bashrc
+
+# Cobol
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    gnucobol
+
+# R
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    r-base \
+    make
+RUN R --vanilla -e "install.packages('languageserver', repos='http://cloud.r-project.org')"
+RUN Rscript -e "install.packages('jsonlite', repos='http://cran.r-project.org')"
+
+# Cleanup
+RUN apt auto-remove -y && apt clean -y;
