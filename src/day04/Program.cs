@@ -10,13 +10,119 @@ class Program
 		return first == 'M' && second == 'A' && third == 'S';
 	}
 
+	private static int CountXmas(string[] lines, int row, int col)
+	{
+		int rows = lines.Length;
+		int cols = lines[0].Length;
+
+		int count = 0;
+
+		// diagonally up-left
+		if (col > 2 && row > 2)
+		{
+			char l2 = lines[row - 1][col - 1];
+			char l3 = lines[row - 2][col - 2];
+			char l4 = lines[row - 3][col - 3];
+			if (ElementsAreMas(l2, l3, l4))
+			{
+				count++;
+			}
+		}
+
+		// straight left
+		if (col > 2)
+		{
+			char l2 = lines[row][col - 1];
+			char l3 = lines[row][col - 2];
+			char l4 = lines[row][col - 3];
+			if (ElementsAreMas(l2, l3, l4))
+			{
+				count++;
+			}
+		}
+
+		// diagonally down-left
+		if (col > 2 && row < rows - 3)
+		{
+			char l2 = lines[row + 1][col - 1];
+			char l3 = lines[row + 2][col - 2];
+			char l4 = lines[row + 3][col - 3];
+			if (ElementsAreMas(l2, l3, l4))
+			{
+				count++;
+			}
+		}
+
+		// straight down
+		if (row < rows - 3)
+		{
+			char l2 = lines[row + 1][col];
+			char l3 = lines[row + 2][col];
+			char l4 = lines[row + 3][col];
+			if (ElementsAreMas(l2, l3, l4))
+			{
+				count++;
+			}
+		}
+
+		// diagonally down-right
+		if (row < rows - 3 && col < cols - 3)
+		{
+			char l2 = lines[row + 1][col + 1];
+			char l3 = lines[row + 2][col + 2];
+			char l4 = lines[row + 3][col + 3];
+			if (ElementsAreMas(l2, l3, l4))
+			{
+				count++;
+			}
+		}
+
+		// straight right
+		if (col < cols - 3)
+		{
+			char l2 = lines[row][col + 1];
+			char l3 = lines[row][col + 2];
+			char l4 = lines[row][col + 3];
+			if (ElementsAreMas(l2, l3, l4))
+			{
+				count++;
+			}
+		}
+
+		// diagonally up-right
+		if (row > 2 && col < cols - 3)
+		{
+			char l2 = lines[row - 1][col + 1];
+			char l3 = lines[row - 2][col + 2];
+			char l4 = lines[row - 3][col + 3];
+			if (ElementsAreMas(l2, l3, l4))
+			{
+				count++;
+			}
+		}
+
+		// straight up
+		if (row > 2)
+		{
+			char l2 = lines[row - 1][col];
+			char l3 = lines[row - 2][col];
+			char l4 = lines[row - 3][col];
+			if (ElementsAreMas(l2, l3, l4))
+			{
+				count++;
+			}
+		}
+
+		return count;
+	}
+
 	static void Main()
 	{
 
 		string[] lines = File.ReadAllLines("input.txt");
 		int rows = lines.Length;
 
-		int count = 0;
+		int xmasCount = 0;
 
 		for (int row = 0; row < rows; row++)
 		{
@@ -26,109 +132,13 @@ class Program
 			for (int col = 0; col < cols; col++)
 			{
 				char letter = line[col];
-				if (letter != 'X')
+				if (letter == 'X')
 				{
-					continue;
-				}
-
-				// diagonally up-left
-				if (col > 2 && row > 2)
-				{
-					char l2 = lines[row - 1][col - 1];
-					char l3 = lines[row - 2][col - 2];
-					char l4 = lines[row - 3][col - 3];
-					if (ElementsAreMas(l2, l3, l4))
-					{
-						count++;
-					}
-				}
-
-				// straight left
-				if (col > 2)
-				{
-					char l2 = lines[row][col - 1];
-					char l3 = lines[row][col - 2];
-					char l4 = lines[row][col - 3];
-					if (ElementsAreMas(l2, l3, l4))
-					{
-						count++;
-					}
-				}
-
-				// diagonally down-left
-				if (col > 2 && row < rows - 3)
-				{
-					char l2 = lines[row + 1][col - 1];
-					char l3 = lines[row + 2][col - 2];
-					char l4 = lines[row + 3][col - 3];
-					if (ElementsAreMas(l2, l3, l4))
-					{
-						count++;
-					}
-				}
-
-				// straight down
-				if (row < rows - 3)
-				{
-					char l2 = lines[row + 1][col];
-					char l3 = lines[row + 2][col];
-					char l4 = lines[row + 3][col];
-					if (ElementsAreMas(l2, l3, l4))
-					{
-						count++;
-					}
-				}
-
-				// diagonally down-right
-				if (row < rows - 3 && col < cols - 3)
-				{
-					char l2 = lines[row + 1][col + 1];
-					char l3 = lines[row + 2][col + 2];
-					char l4 = lines[row + 3][col + 3];
-					if (ElementsAreMas(l2, l3, l4))
-					{
-						count++;
-					}
-				}
-
-				// straight right
-				if (col < cols - 3)
-				{
-					char l2 = lines[row][col + 1];
-					char l3 = lines[row][col + 2];
-					char l4 = lines[row][col + 3];
-					if (ElementsAreMas(l2, l3, l4))
-					{
-						count++;
-					}
-				}
-
-				// diagonally up-right
-				if (row > 2 && col < cols - 3)
-				{
-					char l2 = lines[row - 1][col + 1];
-					char l3 = lines[row - 2][col + 2];
-					char l4 = lines[row - 3][col + 3];
-					if (ElementsAreMas(l2, l3, l4))
-					{
-						count++;
-					}
-				}
-
-				// straight up
-				if (row > 2)
-				{
-					char l2 = lines[row - 1][col];
-					char l3 = lines[row - 2][col];
-					char l4 = lines[row - 3][col];
-					if (ElementsAreMas(l2, l3, l4))
-					{
-						count++;
-					}
+					xmasCount += CountXmas(lines, row, col);
 				}
 			}
 		}
 
-		Console.WriteLine($"Found XMAS {count} times.");
+		Console.WriteLine($"Found XMAS {xmasCount} times.");
 	}
 }
