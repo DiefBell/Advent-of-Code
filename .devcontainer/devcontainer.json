@@ -22,6 +22,7 @@
         "vscode": {
             "extensions": [
 				"dbaeumer.vscode-eslint",
+				"bitlang.cobol",
 				"golang.go",
 				"mhutchie.git-graph",
 				"ms-azuretools.vscode-docker",
