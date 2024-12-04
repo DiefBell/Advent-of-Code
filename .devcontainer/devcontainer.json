@@ -1,5 +1,5 @@
 {
-    "name": "MySQL-Bun-Node",
+    "name": "Avent-of-Code-2024",
     "build": {
         "dockerfile": "Dockerfile",
         "args": {
