@@ -24,6 +24,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
         gdb \
         openjdk-17-jdk \
         python3.13 \
+        gnucobol \
     && apt auto-remove -y \
     && apt clean -y;
 
