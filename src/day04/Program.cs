@@ -10,6 +10,14 @@ class Program
 		return first == 'M' && second == 'A' && third == 'S';
 	}
 
+	/// <summary>
+	/// For a starting letter X at the given row and column,
+	/// finds any XMAS from it.
+	/// </summary>
+	/// <param name="lines"></param>
+	/// <param name="row"></param>
+	/// <param name="col"></param>
+	/// <returns></returns>
 	private static int CountXmas(string[] lines, int row, int col)
 	{
 		int rows = lines.Length;
@@ -116,6 +124,38 @@ class Program
 		return count;
 	}
 
+	/// <summary>
+	/// For a starting letter A at the given row and column,
+	///	finds if it's at the centre of an MAS cross.
+	/// </summary>
+	/// <param name="lines"></param>
+	/// <param name="row"></param>
+	/// <param name="col"></param>
+	/// <returns></returns>
+	private static bool IsMasCross(string[] lines, int row, int col)
+	{
+		int rows = lines.Length;
+		int cols = lines[0].Length;
+
+		if(row < 1 || row > rows - 2 || col < 1 || col > cols - 2)
+		{
+			return false;
+		}
+
+		char centre = lines[row][col];
+		char tl = lines[row-1][col-1];
+		char tr = lines[row-1][col+1];
+		char bl = lines[row+1][col-1];
+		char br = lines[row+1][col+1];
+
+		bool tlbr = ElementsAreMas(tl, centre, br);
+		bool trbl = ElementsAreMas(tr, centre, bl);
+		bool bltr = ElementsAreMas(bl, centre, tr);
+		bool brtl = ElementsAreMas(br, centre, tl);
+
+		return (brtl || tlbr) && (trbl || bltr);
+	}
+
 	static void Main()
 	{
 
@@ -123,6 +163,7 @@ class Program
 		int rows = lines.Length;
 
 		int xmasCount = 0;
+		int masCrossCount = 0;
 
 		for (int row = 0; row < rows; row++)
 		{
@@ -136,9 +177,14 @@ class Program
 				{
 					xmasCount += CountXmas(lines, row, col);
 				}
+				else if(letter == 'A' && IsMasCross(lines, row, col))
+				{
+					masCrossCount++;
+				}
 			}
 		}
 
 		Console.WriteLine($"Found XMAS {xmasCount} times.");
+		Console.WriteLine($"Found MAX cross {masCrossCount} times.");
 	}
 }
