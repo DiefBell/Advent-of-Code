@@ -54,7 +54,7 @@
 			"internalConsoleOptions": "openOnSessionStart",
 			"request": "launch",
 			"mainClass": "${fileBasenameNoExtension}",
-			"cwd": "${workspaceFolder}",
+			"cwd": "${fileDirname}",
 			"preLaunchTask": "Compile Java",
 			"args": [],
 			"console": "internalConsole"
@@ -95,7 +95,8 @@
             "name": "R: Debug file",
             "type": "R-Debugger",
             "request": "launch",
-            "file": "${file}"
+            "file": "${file}",
+			"workingDirectory": "${fileDirname}"
         }
 	]
 }
