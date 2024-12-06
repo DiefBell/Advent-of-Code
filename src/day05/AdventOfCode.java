@@ -87,6 +87,10 @@ public class AdventOfCode
 		return failIndexes;
 	}
 
+	/**
+	 * For valid updates, returns the value of its middle element.
+	 * Returns 0 for invalid updates.
+	 */
     private static Integer GetValidUpdateMiddle(Integer[] update)
     {
 		Set<Integer> fails = GetInvalidPages(update);
@@ -110,11 +114,57 @@ public class AdventOfCode
             count += GetValidUpdateMiddle(update);
         }
 
-        logger.log(Level.INFO, count.toString());
+        logger.log(
+			Level.INFO,
+			"Sum of middles for valid updates: {0}",
+			new Object[]{count.toString()}
+		);
+	}
+
+	private static Integer[] SortUpdate(Integer[] partialUpdate)
+	{
+		return partialUpdate;
+	}
+
+	/**
+	 * For an invalid update, sorts it and returns the value of its middle element.
+	 * Returns 0 if the update is valid.
+	 */
+	private static Integer GetInvalidUpdateMiddle(Integer[] update)
+    {
+		Set<Integer> fails = GetInvalidPages(update);
+		if(fails.isEmpty())
+		{
+			return 0;
+		}
+
+		Integer[] sortedUpdate = SortUpdate(update);
+
+        // integer division, rounds down
+        int middleIndex = sortedUpdate.length / 2;
+        Integer middle = sortedUpdate[middleIndex];
+
+        return middle;
+    }
+
+	private static void Part2()
+	{
+        Integer count = 0;
+        for(Integer[] update : updates)
+        {
+            count += GetInvalidUpdateMiddle(update);
+        }
+
+		logger.log(
+			Level.INFO,
+			"Sum of middles of sorted invalid updates: {0}",
+			new Object[]{count.toString()}
+		);
 	}
 
     public static void main(String[] args) {
         parseInputFile();
 		Part1();
+		Part2();
     }
 }
