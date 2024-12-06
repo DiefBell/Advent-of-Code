@@ -8,7 +8,14 @@ public class AdventOfCode
 {
     private static final Logger logger = Logger.getLogger(AdventOfCode.class.getName());
 
-    public static Input parseInputFile()
+	private static Rules rules = new Rules();
+	private static Integer[][] updates;
+
+	/**
+	 * Parses the input file,
+	 * saves the updates and rules to the class.
+	 */
+    public static void parseInputFile()
     {
         String filePath = "input.txt";
 
@@ -20,7 +27,7 @@ public class AdventOfCode
 
             String[] rulesStrings = parts[0].split("\n");
 
-            Rules rules = new Rules();
+            rules = new Rules();
             for(String ruleString : rulesStrings)
             {
                 String[] ruleParts = ruleString.split("\\|", 2);
@@ -38,16 +45,11 @@ public class AdventOfCode
             String[][] updateValueStrings = Arrays.stream(updatesStrings)
                 .map(s -> s.split(","))  // Split each string by space
                 .toArray(String[][]::new);  // Collect as a 2D array
-            Integer[][] updates = Arrays.stream(updateValueStrings)
+            updates = Arrays.stream(updateValueStrings)
                 .map(innerArray -> Arrays.stream(innerArray)
                     .map(Integer::parseInt)  // Parse each string to Integer
                     .toArray(Integer[]::new)) // Collect the result into Integer[]
                 .toArray(Integer[][]::new);  // Collect the result into a 2D Integer array
-
-            return new Input(
-                rules,
-                updates
-            );
         }
         catch (IOException e)
         {
@@ -55,48 +57,64 @@ public class AdventOfCode
         }
     }
 
-    private static Integer GetValidUpdateMiddle(Rules rules, Integer[] update)
-    {
+	/**
+	 * Returns a set of the indexes of any pages in the given (partial) update
+	 * that are not valid for the given rules.
+	 */
+	private static Set<Integer> GetInvalidPages(Integer[] partialUpdate)
+	{
+		/**
+		 * List of numbers we don't expect to see again.
+		 */
         Set<Integer> blacklist = new HashSet<>();
-        // integer division, rounds down
-        int middleIndex = update.length / 2;
-        Integer middle = null;
+		Set<Integer> failIndexes = new HashSet<>();
 
-        for(int i = 0; i < update.length; i++)
-        {
-            Integer value = update[i];
+		for(int i = 0; i < partialUpdate.length; i++)
+		{
+            Integer value = partialUpdate[i];
 
             if(blacklist.contains(value))
-            {
-                return 0;
-            }
-
-            if(i == middleIndex)
-            {
-                middle = value;
-            }
+			{
+				failIndexes.add(i);
+			}
 
             if(rules.containsKey(value))
             {
                 blacklist.addAll(rules.get(value));
             }
-        }
+		}
+
+		return failIndexes;
+	}
+
+    private static Integer GetValidUpdateMiddle(Integer[] update)
+    {
+		Set<Integer> fails = GetInvalidPages(update);
+		if(!fails.isEmpty())
+		{
+			return 0;
+		}
+
+        // integer division, rounds down
+        int middleIndex = update.length / 2;
+        Integer middle = update[middleIndex];
 
         return middle;
     }
 
-    public static void main(String[] args) {
-        Input input = parseInputFile();
-
-        Rules rules = input.rules();
-        Integer[][] updates = input.updates();
-
+	private static void Part1()
+	{
         Integer count = 0;
         for(Integer[] update : updates)
         {
-            count += GetValidUpdateMiddle(rules, update);
+            count += GetValidUpdateMiddle(update);
         }
 
         logger.log(Level.INFO, count.toString());
+	}
+
+    public static void main(String[] args) {
+        parseInputFile();
+		Part1();
     }
 }
