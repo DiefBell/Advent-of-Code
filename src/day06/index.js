@@ -34,9 +34,7 @@ const findNextPosAndDir = (mapData, pos, dir) => {
 		: { nextPos: possibleNextPos, nextDir: dir };
 };
 
-const main = () => {
-	const mapData = getMapData();
-
+const part1 = (mapData) => {
 	const visitedPositions = new Set();
 
 	let dir = 0; // zero is up
@@ -52,4 +50,5 @@ const main = () => {
 	console.log("Distinct positions: ", visitedPositions.size);
 };
 
-main();
+const mapData = getMapData();
+part1(mapData);
