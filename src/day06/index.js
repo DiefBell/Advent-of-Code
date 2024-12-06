@@ -12,11 +12,19 @@ const getMapData = () => {
 	return { mapString: rows.join(""), height, width };
 };
 
+let depth = 0;
+
 /**
  * Returns next valid position guard can go to,
  * and the direction she'll be facing when she gets there.
+ *
+ * Throws if too many levels of recursion were reached.
  */
 const findNextPosAndDir = (mapData, pos, dir) => {
+	if(++depth > mapData.mapString.length) {
+		depth = 0;
+		throw new Error("TOO DEEP");
+	}
 	if(
 		(dir === 0 && Math.floor(pos / mapData.width) === 0)
 		|| (dir === 2 && Math.floor(pos / mapData.width) === mapData.height - 1)
@@ -50,5 +58,43 @@ const part1 = (mapData) => {
 	console.log("Distinct positions: ", visitedPositions.size);
 };
 
+const part2 = (mapData) => {
+	const replaceCharAt = (str, index, replacement) => {
+		if(index < 0 || index >= str.length) {
+			throw new Error("Index out of bounds");
+		}
+		return str.slice(0, index) + replacement + str.slice(index + 1);
+	};
+
+	let obstaclePositions = 0;
+	for (let i = 0; i < mapData.mapString.length; i++) {
+		const newMapData = {
+			...mapData,
+			mapString: replaceCharAt(mapData.mapString, i, "#"),
+		};
+
+		depth = 0;
+		try {
+			let dir = 0; // zero is up
+			let pos = mapData.mapString.indexOf("^");
+
+			while (pos != -1) {
+				const { nextPos, nextDir } = findNextPosAndDir(newMapData, pos, dir);
+				pos = nextPos;
+				dir = nextDir;
+			}
+		} catch (e) {
+			if(e.message === "TOO DEEP") {
+				obstaclePositions++;
+			} else {
+				throw e;
+			}
+		}
+	}
+
+	console.log("Number of possible obstacle positions: ", obstaclePositions);
+};
+
 const mapData = getMapData();
 part1(mapData);
+part2(mapData);
