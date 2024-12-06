@@ -56,6 +56,7 @@ const part1 = (mapData) => {
 	}
 
 	console.log("Distinct positions: ", visitedPositions.size);
+	return visitedPositions;
 };
 
 const part2 = (mapData) => {
@@ -97,4 +98,7 @@ const part2 = (mapData) => {
 
 const mapData = getMapData();
 part1(mapData);
+
+console.time("Part 2 execution time");
 part2(mapData);
+console.timeEnd("Part 2 execution time");
