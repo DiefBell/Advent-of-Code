@@ -5,14 +5,12 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "TypeScript",
+			"name": "TS/JS",
 			"type": "bun",
 			"internalConsoleOptions": "neverOpen",
 			"request": "launch",
 			"program": "${file}",
 			"cwd": "${workspaceFolder}",
-			"noDebug": true,
-			"watchMode": false
 		},
 		{
 			"name": "C++",
