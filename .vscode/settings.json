@@ -64,5 +64,6 @@
 	"dotnet.defaultSolution": "day04.sln",
 	"python.analysis.typeCheckingMode": "basic",
 	"python.defaultInterpreterPath": "/usr/bin/python3.13",
-	"FSharp.suggestGitignore": false
+	"FSharp.suggestGitignore": false,
+	"r.lsp.promptToInstall": false
 }

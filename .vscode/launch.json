@@ -69,27 +69,6 @@
 			"console": "internalConsole"
 		},
 		{
-			"name": "COBOL: Debug",
-			"type": "cppdbg",
-			"request": "launch",
-			"program": "${fileDirname}/${fileBasenameNoExtension}.out",
-			"preLaunchTask": "Build COBOL",
-			"args": [],
-			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
-			"environment": [],
-			"externalConsole": false,
-			"MIMode": "gdb",
-			"miDebuggerPath": "/usr/bin/gdb", // Adjust this if GDB is in a different location
-			"setupCommands": [
-				{
-					"description": "Enable pretty-printing for gdb",
-					"text": "-enable-pretty-printing",
-					"ignoreFailures": true
-				}
-			]
-		},
-		{
             "name": "R: Debug file",
             "type": "R-Debugger",
             "request": "launch",

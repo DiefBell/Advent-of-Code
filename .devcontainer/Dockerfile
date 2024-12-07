@@ -20,6 +20,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
     ca-certificates \
     nano
 
+# R
+## First here because it takes a fucking age
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    r-base \
+    make
+RUN R --vanilla -e "install.packages('languageserver', repos='http://cloud.r-project.org')"
+RUN Rscript -e "install.packages('jsonlite', repos='http://cran.r-project.org')"
 
 # TypeScript
 ARG BUN_VERSION
@@ -31,7 +38,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
     gdb
 
 # Python
-RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+## IDK why it wants an update, didn't need one until I moved R to the start
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
     python3.13
 
 # C#
@@ -57,13 +65,6 @@ RUN update-alternatives --install /usr/bin/go go /usr/lib/go-1.21/bin/go 1 \
 # Cobol
 RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
     gnucobol
-
-# R
-RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
-    r-base \
-    make
-RUN R --vanilla -e "install.packages('languageserver', repos='http://cloud.r-project.org')"
-RUN Rscript -e "install.packages('jsonlite', repos='http://cran.r-project.org')"
 
 # Cleanup
 RUN apt auto-remove -y && apt clean -y;
