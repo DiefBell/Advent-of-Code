@@ -25,49 +25,79 @@ const equations: Equation[] = lines.map((line) =>
 class Tree
 {
 	private _leafValue: number;
-	private _plus: Tree | null;
-	private _multiply: Tree | null;
-	private _isLast: boolean;
+	private _nextValues: number[];
 
 	constructor(leafValue: number, nextValues: number[])
 	{
 		this._leafValue = leafValue;
-		this._isLast = nextValues.length === 0;
-
-		if(this._isLast)
-		{
-			this._plus = null;
-			this._multiply = null;
-		}
-		else
-		{
-			const nextValue = nextValues[0]!;
-			const withoutFirst = nextValues.slice(1);
-			this._plus = new Tree(leafValue + nextValue, withoutFirst);
-			this._multiply = new Tree(leafValue * nextValue, withoutFirst);
-		}
+		this._nextValues = nextValues;
 	}
 
-	public matchesTarget(target: number): boolean
+	public searchForTarget(target: number, tryConcat: boolean): boolean
 	{
-		if(this._isLast)
+		if(this._leafValue > target)
+		{
+			return false;
+		}
+
+		if(this._nextValues.length === 0)
 		{
 			return this._leafValue === target;
 		}
 
-		return this._plus!.matchesTarget(target) || this._multiply!.matchesTarget(target);
-	}
-}
+		const nextValues = this._nextValues.slice(1);
 
-let total = 0;
-for (const equation of equations)
-{
-	const { target, values } = equation;
-	const tree = new Tree(values.shift()!, values);
-	if(tree.matchesTarget(target))
+		const nextValue = this._nextValues[0];
+
+		const plus = new Tree(this._leafValue + nextValue, nextValues)
+			.searchForTarget(target, tryConcat);
+		const multiply = new Tree(this._leafValue * nextValue, nextValues)
+			.searchForTarget(target, tryConcat);
+		const concat = tryConcat
+			&& new Tree(this._concatNumbers(this._leafValue, nextValue), nextValues)
+				.searchForTarget(target, tryConcat);
+
+		return plus || multiply || concat;
+	}
+
+	private _concatNumbers(left: number, right: number): number
 	{
-		total += equation.target;
+		const concat = parseInt(`${left}${right}`);
+		return concat;
 	}
 }
 
-console.log("Num can compute: ", total);
+const getNumberValidEquations = (tryConcat: boolean): number =>
+{
+	let total = 0;
+	for (const equation of equations)
+	{
+		const { target, values } = equation;
+		const tree = new Tree(values[0], values.slice(1));
+		if(tree.searchForTarget(target, tryConcat))
+		{
+			total += equation.target;
+		}
+	}
+	return total;
+};
+
+const part1 = () =>
+{
+	const total = getNumberValidEquations(false);
+	console.log(`Total WITHOUT concat operator: ${total}`);
+};
+
+const part2 = () =>
+{
+	const total = getNumberValidEquations(true);
+	console.log(`Total WITH concat operator: ${total}`);
+};
+
+console.time("Part One");
+part1();
+console.timeEnd("Part One");
+
+console.time("Part Two");
+part2();
+console.timeEnd("Part Two");
