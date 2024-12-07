@@ -59,7 +59,7 @@ const part1 = (mapData) => {
 	return visitedPositions;
 };
 
-const part2 = (mapData) => {
+const part2 = (mapData, visitedPositions) => {
 	const replaceCharAt = (str, index, replacement) => {
 		if(index < 0 || index >= str.length) {
 			throw new Error("Index out of bounds");
@@ -68,10 +68,10 @@ const part2 = (mapData) => {
 	};
 
 	let obstaclePositions = 0;
-	for (let i = 0; i < mapData.mapString.length; i++) {
+	for (const possibleObstactlePosition of visitedPositions) {
 		const newMapData = {
 			...mapData,
-			mapString: replaceCharAt(mapData.mapString, i, "#"),
+			mapString: replaceCharAt(mapData.mapString, possibleObstactlePosition, "#"),
 		};
 
 		depth = 0;
@@ -97,8 +97,8 @@ const part2 = (mapData) => {
 };
 
 const mapData = getMapData();
-part1(mapData);
+const visitedPositions = part1(mapData);
 
 console.time("Part 2 execution time");
-part2(mapData);
+part2(mapData, visitedPositions);
 console.timeEnd("Part 2 execution time");
