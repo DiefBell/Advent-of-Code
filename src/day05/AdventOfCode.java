@@ -8,7 +8,16 @@ public class AdventOfCode
 {
     private static final Logger logger = Logger.getLogger(AdventOfCode.class.getName());
 
-	private static Rules rules = new Rules();
+	/**
+	 * A map of the rules,
+	 * keyed by a number that should come BEFORE all of that key's values.
+	 */
+	private static Rules rulesByEarliest = new Rules();
+	/**
+	 * A map of the rules,
+	 * keyed by a number that should come AFTER all of that key's values.
+	 */
+	private static Rules rulesByLatest = new Rules();
 	private static Integer[][] updates;
 
 	/**
@@ -27,18 +36,24 @@ public class AdventOfCode
 
             String[] rulesStrings = parts[0].split("\n");
 
-            rules = new Rules();
+            rulesByLatest = new Rules();
             for(String ruleString : rulesStrings)
             {
                 String[] ruleParts = ruleString.split("\\|", 2);
                 Integer before = Integer.valueOf(ruleParts[0]);
                 Integer after = Integer.valueOf(ruleParts[1]);
 
-                if(!rules.containsKey(after))
+				if(!rulesByEarliest.containsKey(before))
+				{
+					rulesByEarliest.put(before, new HashSet<>());
+				}
+				rulesByEarliest.get(before).add(after);
+
+                if(!rulesByLatest.containsKey(after))
                 {
-                    rules.put(after, new HashSet<>());
+                    rulesByLatest.put(after, new HashSet<>());
                 }
-                rules.get(after).add(before);
+                rulesByLatest.get(after).add(before);
             }
 
             String[] updatesStrings = parts[1].split("\n");
@@ -61,13 +76,13 @@ public class AdventOfCode
 	 * Returns a set of the indexes of any pages in the given (partial) update
 	 * that are not valid for the given rules.
 	 */
-	private static Set<Integer> GetInvalidPages(Integer[] partialUpdate)
+	private static Integer[] GetInvalidPages(Integer[] partialUpdate)
 	{
 		/**
 		 * List of numbers we don't expect to see again.
 		 */
         Set<Integer> blacklist = new HashSet<>();
-		Set<Integer> failIndexes = new HashSet<>();
+		ArrayList<Integer> failIndexes = new ArrayList<>();
 
 		for(int i = 0; i < partialUpdate.length; i++)
 		{
@@ -78,13 +93,13 @@ public class AdventOfCode
 				failIndexes.add(i);
 			}
 
-            if(rules.containsKey(value))
+            if(rulesByLatest.containsKey(value))
             {
-                blacklist.addAll(rules.get(value));
+                blacklist.addAll(rulesByLatest.get(value));
             }
 		}
 
-		return failIndexes;
+		return failIndexes.toArray(Integer[]::new);
 	}
 
 	/**
@@ -93,8 +108,8 @@ public class AdventOfCode
 	 */
     private static Integer GetValidUpdateMiddle(Integer[] update)
     {
-		Set<Integer> fails = GetInvalidPages(update);
-		if(!fails.isEmpty())
+		Integer[] fails = GetInvalidPages(update);
+		if(fails.length != 0)
 		{
 			return 0;
 		}
@@ -123,6 +138,9 @@ public class AdventOfCode
 
 	private static Integer[] SortUpdate(Integer[] partialUpdate)
 	{
+		// Set<Integer> fails = GetInvalidPages(partialUpdate);
+		// Integer[] sortedFails = SortUpdate(fails);
+
 		return partialUpdate;
 	}
 
@@ -132,8 +150,8 @@ public class AdventOfCode
 	 */
 	private static Integer GetInvalidUpdateMiddle(Integer[] update)
     {
-		Set<Integer> fails = GetInvalidPages(update);
-		if(fails.isEmpty())
+		Integer[] fails = GetInvalidPages(update);
+		if(fails.length == 0)
 		{
 			return 0;
 		}
