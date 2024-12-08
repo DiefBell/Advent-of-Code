@@ -12,12 +12,12 @@ public class AdventOfCode
 	 * A map of the rules,
 	 * keyed by a number that should come BEFORE all of that key's values.
 	 */
-	private static Rules rulesByEarliest = new Rules();
+	private static final Rules rulesByEarliest = new Rules();
 	/**
 	 * A map of the rules,
 	 * keyed by a number that should come AFTER all of that key's values.
 	 */
-	private static Rules rulesByLatest = new Rules();
+	private static final Rules rulesByLatest = new Rules();
 	private static Integer[][] updates;
 
 	/**
@@ -36,7 +36,6 @@ public class AdventOfCode
 
             String[] rulesStrings = parts[0].split("\n");
 
-            rulesByLatest = new Rules();
             for(String ruleString : rulesStrings)
             {
                 String[] ruleParts = ruleString.split("\\|", 2);
@@ -136,12 +135,62 @@ public class AdventOfCode
 		);
 	}
 
+	// Method to check if there is any overlap between Integer[] and Set<Integer>
+    public static boolean HasOverlap(Integer[] subArray, Set<Integer> set) {
+		if(set == null)
+		{
+			return false;
+		}
+
+		if(subArray.length == 0)
+		{
+			return false;
+		}
+
+        for (Integer element : subArray) {
+            if (set.contains(element)) {
+                return true; // Return true if an element is found in both the array and the set
+            }
+        }
+        return false; // No overlap
+    }
+
 	private static Integer[] SortUpdate(Integer[] partialUpdate)
 	{
-		// Set<Integer> fails = GetInvalidPages(partialUpdate);
-		// Integer[] sortedFails = SortUpdate(fails);
+		Integer[] fails = GetInvalidPages(partialUpdate);
+		if(fails.length == 0)
+		{
+			return partialUpdate;
+		}
 
-		return partialUpdate;
+		Integer[] sortedFails = SortUpdate(fails);
+
+		ArrayList<Integer> sortedUpdate = new ArrayList<>();
+
+		for(
+			int idx_sf = sortedFails.length - 1, idx_pu = partialUpdate.length - 1;
+			idx_pu >= 0 && idx_sf >= 0;
+		)
+		{
+			Integer sortedFailValue = sortedFails[idx_sf];
+			Set<Integer> blacklist = rulesByEarliest.get(sortedFailValue);
+
+			Integer[] updateBefore = Arrays.copyOfRange(partialUpdate, 0, idx_pu);
+
+			if(HasOverlap(updateBefore, blacklist))
+			{
+				sortedUpdate.add(sortedFailValue);
+				idx_sf--;
+			}
+			else
+			{
+				sortedUpdate.add(partialUpdate[idx_pu]);
+				idx_pu--;
+			}
+		}
+
+		Collections.reverse(sortedUpdate);
+		return sortedUpdate.toArray(Integer[]::new);
 	}
 
 	/**
@@ -183,6 +232,6 @@ public class AdventOfCode
     public static void main(String[] args) {
         parseInputFile();
 		Part1();
-		Part2();
+		Part2(); // > 4791
     }
 }
