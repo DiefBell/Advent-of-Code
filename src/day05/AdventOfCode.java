@@ -27,6 +27,7 @@ public class AdventOfCode
     public static void parseInputFile()
     {
         String filePath = "input.txt";
+        // String filePath = "input.sample.txt";
 
 		String content;
 		try
@@ -81,7 +82,7 @@ public class AdventOfCode
 		 * List of numbers we don't expect to see again.
 		 */
         Set<Integer> blacklist = new HashSet<>();
-		ArrayList<Integer> failIndexes = new ArrayList<>();
+		ArrayList<Integer> failedIndices = new ArrayList<>();
 
 		for(int i = 0; i < partialUpdate.length; i++)
 		{
@@ -89,7 +90,7 @@ public class AdventOfCode
 
             if(blacklist.contains(value))
 			{
-				failIndexes.add(i);
+				failedIndices.add(i);
 			}
 
             if(rulesByLatest.containsKey(value))
@@ -98,7 +99,8 @@ public class AdventOfCode
             }
 		}
 
-		return failIndexes.toArray(Integer[]::new);
+		Integer[] failedIndicesArray = failedIndices.toArray(Integer[]::new);
+		return failedIndicesArray;
 	}
 
 	/**
@@ -107,8 +109,8 @@ public class AdventOfCode
 	 */
     private static Integer GetValidUpdateMiddle(Integer[] update)
     {
-		Integer[] fails = GetInvalidPages(update);
-		if(fails.length != 0)
+		Integer[] failIndices = GetInvalidPages(update);
+		if(failIndices.length != 0)
 		{
 			return 0;
 		}
@@ -141,6 +143,10 @@ public class AdventOfCode
 		{
 			return false;
 		}
+		if(subArray == null)
+		{
+			return false;
+		}
 
 		if(subArray.length == 0)
 		{
@@ -155,37 +161,92 @@ public class AdventOfCode
         return false; // No overlap
     }
 
+	// Method to map indices to corresponding values in the 'values' array
+    public static Integer[] MapIndicesToValues(Integer[] values, Integer[] indices) {
+        Integer[] result = new Integer[indices.length];
+
+        // Map each index to the corresponding value
+        for (int i = 0; i < indices.length; i++) {
+            int index = indices[i];
+            if (index >= 0 && index < values.length) {
+                result[i] = values[index]; // Get the value at the given index
+            } else {
+                result[i] = null; // Handle invalid index if needed
+            }
+        }
+
+        return result;
+    }
+
+	// Method to filter out elements based on indices to remove
+    public static Integer[] FilterArrayByIndicesToRemove(Integer[] arrayToFilter, Integer[] indicesToRemove) {
+        Set<Integer> indicesSet = new HashSet<>(Arrays.asList(indicesToRemove));
+        List<Integer> filteredList = new ArrayList<>();
+
+        for (int i = 0; i < arrayToFilter.length; i++) {
+            if (!indicesSet.contains(i)) { // Keep elements whose indices are not in the set
+                filteredList.add(arrayToFilter[i]);
+            }
+        }
+
+        // Convert the filtered list back to an array
+        return filteredList.toArray(Integer[]::new);
+    }
+
 	private static Integer[] SortUpdate(Integer[] partialUpdate)
 	{
-		Integer[] fails = GetInvalidPages(partialUpdate);
-		if(fails.length == 0)
+		Integer[] failIndices = GetInvalidPages(partialUpdate);
+		if(failIndices.length == 0)
 		{
 			return partialUpdate;
 		}
 
+		Integer[] fails = MapIndicesToValues(partialUpdate, failIndices);
 		Integer[] sortedFails = SortUpdate(fails);
 
+		Integer[] updateWithoutFails = FilterArrayByIndicesToRemove(partialUpdate, failIndices);
 		ArrayList<Integer> sortedUpdate = new ArrayList<>();
 
 		for(
-			int idx_sf = sortedFails.length - 1, idx_pu = partialUpdate.length - 1;
-			idx_pu >= 0 && idx_sf >= 0;
+			int idxSortedFails = sortedFails.length - 1, idxUpdateNoFails = updateWithoutFails.length - 1;
+			idxUpdateNoFails >= 0 || idxSortedFails >= 0;
 		)
 		{
-			Integer sortedFailValue = sortedFails[idx_sf];
-			Set<Integer> blacklist = rulesByEarliest.get(sortedFailValue);
+			Integer sortedFailValue = null;
+			Set<Integer> blacklist = null;
+			if(idxSortedFails >= 0) {
+				sortedFailValue = sortedFails[idxSortedFails];
+				blacklist = rulesByEarliest.get(sortedFailValue);
+			} 
+			
+			Integer[] updateBefore = null;
+			if(idxUpdateNoFails >= 0) {
+				updateBefore = Arrays.copyOfRange(updateWithoutFails, 0, idxUpdateNoFails + 1);
+			}
 
-			Integer[] updateBefore = Arrays.copyOfRange(partialUpdate, 0, idx_pu);
+			if(idxSortedFails < 0)
+			{
+				sortedUpdate.add(updateWithoutFails[idxUpdateNoFails]);
+				idxUpdateNoFails--;
+				continue;
+			}
 
-			if(HasOverlap(updateBefore, blacklist))
+			if(idxUpdateNoFails < 0)
 			{
 				sortedUpdate.add(sortedFailValue);
-				idx_sf--;
+				idxSortedFails--;
+				continue;
+			}
+			
+			if(!HasOverlap(updateBefore, blacklist))
+			{
+				sortedUpdate.add(sortedFailValue);
+				idxSortedFails--;
 			}
 			else
 			{
-				sortedUpdate.add(partialUpdate[idx_pu]);
-				idx_pu--;
+				sortedUpdate.add(updateWithoutFails[idxUpdateNoFails]);
+				idxUpdateNoFails--;
 			}
 		}
 
@@ -199,8 +260,8 @@ public class AdventOfCode
 	 */
 	private static Integer GetInvalidUpdateMiddle(Integer[] update)
     {
-		Integer[] fails = GetInvalidPages(update);
-		if(fails.length == 0)
+		Integer[] failIndices = GetInvalidPages(update);
+		if(failIndices.length == 0)
 		{
 			return 0;
 		}
@@ -231,7 +292,7 @@ public class AdventOfCode
 
     public static void main(String[] args) {
         parseInputFile();
-		Part1();
-		Part2(); // > 4791
+		Part1(); // 3608
+		Part2(); // 4922
     }
 }
