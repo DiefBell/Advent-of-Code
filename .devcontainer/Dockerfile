@@ -24,7 +24,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
 ## First here because it takes a fucking age
 RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
     r-base \
-    make
+    make \
+    locales
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+    && locale-gen \
+    && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 RUN R --vanilla -e "install.packages('languageserver', repos='http://cloud.r-project.org')"
 RUN Rscript -e "install.packages('jsonlite', repos='http://cran.r-project.org')"
 
