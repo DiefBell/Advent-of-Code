@@ -38,13 +38,13 @@ index_to_coords <- function(index, width) {
 }
 
 # Function to check if extending the line goes off the edge
-check_if_off_edge <- function(index1, index2, width, height) {
+check_if_off_edge <- function(index1, index2, width, height, mutliplier) {
   coords1 <- index_to_coords(index1, width)
   coords2 <- index_to_coords(index2, width)
 
   # Calculate the distance in x and y directions
-  dx <- coords2[1] - coords1[1]
-  dy <- coords2[2] - coords1[2]
+  dx <- (coords2[1] - coords1[1]) * multiplier
+  dy <- (coords2[2] - coords1[2]) * multiplier
   
   # Extend the line by the same distance again
   extended_x <- coords2[1] + dx
@@ -56,6 +56,7 @@ check_if_off_edge <- function(index1, index2, width, height) {
 
 # Initialize antinodes array
 antinodes <- c()
+harmonic_antinodes <- c()
 
 # Iterate over each character's indices in antenna_locations
 for (char in names(antenna_locations)) {
@@ -67,22 +68,33 @@ for (char in names(antenna_locations)) {
   # Process each index pair
   for (i in 1:ncol(index_pairs)) {
     pair <- index_pairs[, i]
+	multiplier <- 1
+	harmonic_antinodes <- c(harmonic_antinodes, pair)
 
-    # Calculate new indices for the extensions
-    index_up <- (2 * pair[2]) - pair[1]
-    index_down <- (2 * pair[1]) - pair[2]
+    while (TRUE) {
+        index_up <- pair[2] + multiplier * (pair[2] - pair[1])
+        if (check_if_off_edge(pair[1], pair[2], width, height, multiplier)) break
+        if (index_up > 0) {
+			if(multiplier == 1) antinodes <- c(antinodes, index_up)
+			harmonic_antinodes <- c(harmonic_antinodes, index_up)
+        }
+        multiplier <- multiplier + 1
+      }
 
-    # Check if upward extension goes off the edge
-    if (!check_if_off_edge(pair[1], pair[2], width, height) && index_up > 0) {
-      antinodes <- c(antinodes, index_up)  # Add positive index
-    }
-
-    # Check if downward extension goes off the edge
-    if (!check_if_off_edge(pair[2], pair[1], width, height) && index_down > 0) {
-      antinodes <- c(antinodes, index_down)  # Add positive index
-    }
+    # Reset multiplier for downward extension
+	multiplier <- 1
+	while (TRUE) {
+		index_down <- pair[1] - multiplier * (pair[2] - pair[1])
+		if (check_if_off_edge(pair[2], pair[1], width, height, multiplier)) break
+		if (index_down > 0) {
+			if(multiplier == 1) antinodes <- c(antinodes, index_down)
+			harmonic_antinodes <- c(harmonic_antinodes, index_down)
+		}
+		multiplier <- multiplier + 1
+	}
   }
 }
 
 # Print the length of unique antinodes
 cat("\nNumber of unique antinode locations:", length(unique(antinodes)), "\n")
+cat("\nNumber of unique antinode locations including harmonics:", length(unique(harmonic_antinodes)), "\n")
