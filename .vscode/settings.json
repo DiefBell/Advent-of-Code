@@ -65,5 +65,10 @@
 	"python.analysis.typeCheckingMode": "basic",
 	"python.defaultInterpreterPath": "/usr/bin/python3.13",
 	"FSharp.suggestGitignore": false,
-	"r.lsp.promptToInstall": false
+	"r.lsp.promptToInstall": false,
+	"perl.enable": true,
+	"perl.perlCmd": "/root/perl5/perlbrew/perls/perl-5.20.0/bin/perl",
+	"perl.perlInc": [
+		"/root/perl5/perlbrew/perls/perl-5.20.0/lib/site_perl/5.20.0/Perl"
+	]
 }

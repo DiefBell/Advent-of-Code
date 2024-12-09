@@ -74,6 +74,13 @@
             "request": "launch",
             "file": "${file}",
 			"workingDirectory": "${fileDirname}"
-        }
+        },
+		{
+			"type": "perl",
+			"request": "launch",
+			"name": "Perl-Debug",
+			"program": "${file}",
+			"cwd": "${fileDirname}"
+		},
 	]
 }

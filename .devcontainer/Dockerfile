@@ -2,6 +2,8 @@ FROM ubuntu:jammy
 
 SHELL ["/bin/bash", "-c"]
 
+# RUN unminize -y
+
 # Install Ubuntu packages, then clean up
 RUN apt update \
     # Need this package before we can add these apt repos
@@ -18,17 +20,33 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
     zip \
     unzip \
     ca-certificates \
-    nano
+    nano \
+    man-db \
+    make
 
-# R
-## First here because it takes a fucking age
-RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
-    r-base \
-    make \
-    locales
+# Locale
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends locales
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+
+# Perl
+## First here because it takes a fucking age
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+        make \
+        build-essential \
+        man-db
+RUN curl -L https://install.perlbrew.pl | bash
+RUN echo "source ~/perl5/perlbrew/etc/bashrc" >> ~/.bashrc
+RUN ~/perl5/perlbrew/bin/perlbrew install --notest 5.20.0
+RUN ~/perl5/perlbrew/bin/perlbrew switch perl-5.20.0
+RUN  yes | ~/perl5/perlbrew/perls/perl-5.20.0/bin/cpan Perl::LanguageServer
+
+# R
+## Also up high because it takes so bloody long
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    r-base \
+    make
 RUN R --vanilla -e "install.packages('languageserver', repos='http://cloud.r-project.org')"
 RUN Rscript -e "install.packages('jsonlite', repos='http://cran.r-project.org')"
 

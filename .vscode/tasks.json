@@ -60,7 +60,23 @@
 			"options": {
 				"cwd": "${fileDirname}"
 			}
-		}
+		},
+		{
+			"label": "Run Perl Script",
+			"type": "shell",
+			"command": "perl",
+			"args": [
+			  "${file}"
+			],
+			"group": {
+			  "kind": "build",
+			  "isDefault": true
+			},
+			"problemMatcher": [],
+			"options": {
+				"cwd": "${fileDirname}"
+			}
+		  }
 	],
 	"version": "2.0.0"
 }
