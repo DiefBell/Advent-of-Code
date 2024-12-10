@@ -86,5 +86,12 @@ RUN update-alternatives --install /usr/bin/go go /usr/lib/go-1.21/bin/go 1 \
 RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
     gnucobol
 
+# Rust
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    # for debugger
+    lldb
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+    && echo "source \$HOME/.cargo/env" >> ~/.bashrc
+
 # Cleanup
 RUN apt auto-remove -y && apt clean -y;

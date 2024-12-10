@@ -84,5 +84,15 @@
 			"stopOnEntry": false,
 			"reloadModules": true
 		},
+		{
+			"name": "Launch Rust Program",
+			"type": "lldb",
+			"request": "launch",
+			"program": "${fileDirname}/../target/debug/advent_of_code_2024",
+			"args": [],
+			"cwd": "${fileDirname}/..",
+			"preLaunchTask": "cargo build",
+			"internalConsoleOptions": "openOnFirstSessionStart"
+		  }
 	]
 }
