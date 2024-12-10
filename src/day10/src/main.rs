@@ -41,20 +41,18 @@ fn get_neighbours(coord: &Coord, array: &Vec<Vec<i32>>) -> Vec<Coord> {
 
 /**
  * Traverse the grid from the given coord.
- * Returns true if this coord eventually leads to a peak.
- * 
- * Any peaks found are stored in peaks_for_trailhead.
+ * Returns the total number of ways to reach peaks from this co-ordinate.
  */
 fn traverse(
     coord: &Coord,
     grid: &Vec<Vec<i32>>,
     peaks_for_trailhead: &mut HashSet<Coord>  // Use mutable reference
-) -> bool {
+) -> u32 {
     let height = grid[coord.y][coord.x];
     if height >= 9 {
         // Insert without checking if it already exists
         peaks_for_trailhead.insert(coord.clone());
-        return true;
+        return 1;
     }
 
     // Get the neighbours of the current coordinate
@@ -67,19 +65,16 @@ fn traverse(
 
     // Exit early if there are no valid neighbours
     if valid_neighbours.is_empty() {
-        return false;
+        return 0;
     }
 
-	let mut peak_found = false;
-    // Iterate over the valid neighbours, recursively traversing them
+	let mut count: u32 = 0;
     for neighbour in valid_neighbours {
         // Call traverse without parentheses around the if condition
-        if traverse(&neighbour, grid, peaks_for_trailhead) {
-            peak_found = true;
-        }
+        count += traverse(&neighbour, grid, peaks_for_trailhead)
     }
 
-    peak_found
+	return count;
 }
 
 fn main() -> io::Result<()> {
@@ -118,16 +113,19 @@ fn main() -> io::Result<()> {
 
 	println!("Number of trailheads: {}", trailheads.len());
 
-    let mut total_count = 0;
+    let mut valid_trailheads = 0;
+	let mut total_rank = 0;
     
     // Iterate over the list of trailheads and process each one
     for coord in &trailheads {
 		let mut peaks_for_trailhead: HashSet<Coord> = HashSet::new();
-        traverse(coord, &array, &mut peaks_for_trailhead);
-		total_count += peaks_for_trailhead.len();
+        total_rank += traverse(coord, &array, &mut peaks_for_trailhead);
+		valid_trailheads += peaks_for_trailhead.len();
+
     }
 
-    println!("Total valid routes: {}", total_count);
+    println!("Total trailheads that have at least one valid route: {}", valid_trailheads);
+    println!("Sum of all trailhead ranks: {}", total_rank);
 
     Ok(())
 }
