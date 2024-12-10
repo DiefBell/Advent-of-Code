@@ -8,9 +8,11 @@ use DiskFile;          # DiskFile class
 use EmptySpace;        # EmptySpace class
 use DiskItem;          # DiskItem class
 
+use Time::HiRes qw(gettimeofday);
+
 # File path
-# my $file_path = 'input.txt';
-my $file_path = 'input.sample.txt';
+my $file_path = 'input.txt';
+# my $file_path = 'input.sample.txt';
 
 # Open the file
 open(my $fh, '<', $file_path) or die "Cannot open file: $!";
@@ -43,11 +45,7 @@ for my $index (0 .. length($line) - 1) {
 }
 
 my $disk_string = $disk->to_string();
-print "Parsed disk: $disk_string\n";
-
-# Call the part_one function to process the disk and calculate the checksum
-part_one($disk);
-part_two($disk);
+# print "Parsed disk: $disk_string\n";
 
 # Define the part_one function, takes a more functional approach
 sub part_one {
@@ -92,18 +90,53 @@ sub part_one {
 
 # Part two, more object-oriented
 sub part_two {
-	my($original_disk) = @_;
+	my ($original_disk) = @_;
 	my $disk = $original_disk->deep_copy();
 
-	# Keep getting the last unmoved DiskFile
-	my $last_unmoved_disk_file;
-	while ($last_unmoved_disk_file = $disk->get_last_unmoved_disk_file()) {
-		# Get all empty spaces and find the first one large enough for the DiskFile
+	# Iterate while there are unmoved DiskFiles
+	for (my $last_unmoved_index = $disk->get_last_unmoved_disk_file_index();
+		$last_unmoved_index != -1;
+		$last_unmoved_index = $disk->get_last_unmoved_disk_file_index()) {
+
+		# Get the DiskFile at the last unmoved index
+		my $last_unmoved_disk_file = $disk->{items}[$last_unmoved_index];
+
+		# Get the first empty space that fits before the last unmoved DiskFile
 		my @empty_spaces = $disk->get_empty_spaces();
-		my $first_empty_space = (grep { $_->{size} >= $last_unmoved_disk_file->{size} } @empty_spaces)[0];
-		$disk->overwrite($first_empty_space, $last_unmoved_disk_file);
+		my $first_empty_space_that_fits = undef;
+		for my $i (0 .. $last_unmoved_index - 1) {
+			my $item = $disk->{items}[$i];
+			if($item->isa("DiskFile")) {
+				next;
+			}
+			if($item->{size} >= $last_unmoved_disk_file->{size}) {
+				$first_empty_space_that_fits = $item;
+				last;
+			}
+		}
+
+		# Overwrite the EmptySpace with the DiskFile
+		$disk->overwrite($first_empty_space_that_fits, $last_unmoved_disk_file);
+
+		# # Print the current state of the disk
+		# my $disk_string = $disk->to_string();
+		# print "The disk is: $disk_string\n";
 	}
 
 	my $checksum = $disk->checksum();
 	print "Part two checksum: $checksum\n";
 }
+
+
+########## MAIN CODE ###########
+my $start_time = gettimeofday();
+part_one($disk);
+my $end_time = gettimeofday();
+my $duration = $end_time - $start_time;
+print "Part one took $duration seconds to run.\n";
+
+$start_time = gettimeofday();
+part_two($disk);
+$end_time = gettimeofday();
+$duration = $end_time - $start_time;
+print "Part two took $duration seconds to run.\n";

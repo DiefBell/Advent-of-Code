@@ -103,3 +103,7 @@ now, this example's checksum would be `2858`.
 
 Start over, now compacting the amphipod's hard drive using this new method instead.
 What is the resulting filesystem checksum?
+
+our puzzle answer was 6307279963620.
+
+Both parts of this puzzle are complete! They provide two gold stars: ⭐⭐

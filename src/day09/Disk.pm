@@ -67,22 +67,22 @@ sub get_disk_files {
     return @disk_files;
 }
 
-# Method to get the last unmoved DiskFile
-sub get_last_unmoved_disk_file {
+# Method to get the index of the last unmoved DiskFile
+sub get_last_unmoved_disk_file_index {
     my ($self) = @_;
 
     # Loop through the items in reverse order
     for (my $i = $#{$self->{items}}; $i >= 0; $i--) {
         my $item = $self->{items}[$i];
 
-        # If the item is a DiskFile and is not moved, return it
+        # If the item is a DiskFile and is not moved, return its index
         if (ref($item) eq 'DiskFile' && !$item->{moved}) {
-            return $item;
+            return $i;
         }
     }
 
-    # If no unmoved DiskFile is found, return undef
-    return undef;
+    # If no unmoved DiskFile is found, return -1
+    return -1;
 }
 
 # Method to overwrite EmptySpace with a DiskFile
@@ -91,6 +91,7 @@ sub overwrite {
 
     # If EmptySpace is undef, flag the DiskFile as moved and exit
     if (!defined($empty_space)) {
+		# flag file as one we've tried to move
         $disk_file->set_moved(1);
         return;
     }
@@ -100,34 +101,43 @@ sub overwrite {
         die "DiskFile size is greater than EmptySpace size!";
     }
 
-    # Move the DiskFile to in front of the EmptySpace
-    my $index = -1;
+    # Find the indices of the DiskFile and EmptySpace in the items array
+    my $file_index = -1;
     my $empty_index = -1;
     for my $i (0 .. $#{$self->{items}}) {
         if ($self->{items}[$i] == $empty_space) {
             $empty_index = $i;
         }
         if ($self->{items}[$i] == $disk_file) {
-            $index = $i;
+            $file_index = $i;
         }
     }
 
-    if ($index == -1 || $empty_index == -1) {
+    if ($file_index == -1 || $empty_index == -1) {
         die "DiskFile or EmptySpace not found in Disk!";
     }
 
-    # Remove the DiskFile from its current position (if any) and add it before EmptySpace
-    splice(@{$self->{items}}, $index, 1);
-    splice(@{$self->{items}}, $empty_index, 0, $disk_file);
+    # Reduce the EmptySpace's size by the DiskFile's size before any splicing
+    $empty_space->resize($empty_space->{size} - $disk_file->{size});
 
-    # Decrease the EmptySpace's size by the DiskFile's size
-    $empty_space->{size} -= $disk_file->{size};
+	# Create a new EmptySpace at the DiskFile's original position
+    my $new_empty_space = EmptySpace->new($disk_file->{size});
 
-    # If EmptySpace's size goes down to zero, remove it from @items
-    if ($empty_space->{size} == 0) {
-        splice(@{$self->{items}}, $empty_index, 1);
-    }
+    # Replace the DiskFile at its original position with the new EmptySpace
+    splice(@{$self->{items}}, $file_index, 1, $new_empty_space);
+
+    # Insert the DiskFile before EmptySpace
+    splice(
+		@{$self->{items}},
+		$empty_index,
+		$empty_space->{size} == 0 ? 1 : 0, # 1 => replace, 0 => just put in front
+		$disk_file
+	);
+
+	# Flag file as moved
+    $disk_file->set_moved(1);
 }
+
 
 sub checksum {
     my ($self) = @_;
