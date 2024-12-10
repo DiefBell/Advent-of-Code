@@ -39,49 +39,53 @@ fn get_neighbours(coord: &Coord, array: &Vec<Vec<i32>>) -> Vec<Coord> {
     neighbours
 }
 
-fn traverse(coord: &Coord, array: &Vec<Vec<i32>>, visited: &mut HashSet<Coord>) -> u32 {
-    let height = array[coord.y][coord.x];
+/**
+ * Traverse the grid from the given coord.
+ * Returns true if this coord eventually leads to a peak.
+ * 
+ * Any peaks found are stored in peaks_for_trailhead.
+ */
+fn traverse(
+    coord: &Coord,
+    grid: &Vec<Vec<i32>>,
+    peaks_for_trailhead: &mut HashSet<Coord>  // Use mutable reference
+) -> bool {
+    let height = grid[coord.y][coord.x];
     if height >= 9 {
-        return 1;
+        // Insert without checking if it already exists
+        peaks_for_trailhead.insert(coord.clone());
+        return true;
     }
-
-    // Exit early if we've already visited this coordinate in the current path
-    if visited.contains(coord) {
-        return 0;
-    }
-
-    // Mark this coordinate as visited for this path
-    visited.insert(coord.clone());
 
     // Get the neighbours of the current coordinate
-    let neighbours = get_neighbours(coord, array);
+    let neighbours = get_neighbours(coord, grid);
 
     // Filter the neighbours where their height is exactly one more than the current height
     let valid_neighbours: Vec<Coord> = neighbours.into_iter()
-        .filter(|neighbour| array[neighbour.y][neighbour.x] == height + 1)
+        .filter(|neighbour| grid[neighbour.y][neighbour.x] == height + 1)
         .collect();
 
     // Exit early if there are no valid neighbours
     if valid_neighbours.is_empty() {
-        return 0;
+        return false;
     }
 
-    // Initialize the count
-    let mut count = 0;
-
+	let mut peak_found = false;
     // Iterate over the valid neighbours, recursively traversing them
     for neighbour in valid_neighbours {
-        // Recurse and add the result to the count
-        count += traverse(&neighbour, array, visited);
+        // Call traverse without parentheses around the if condition
+        if traverse(&neighbour, grid, peaks_for_trailhead) {
+            peak_found = true;
+        }
     }
 
-    count    
+    peak_found
 }
 
 fn main() -> io::Result<()> {
     // Open the file for reading
-    let file = File::open("input.sample.txt")?;
-    // let file = File::open("input.txt")?;
+    // let file = File::open("input.sample.txt")?;
+    let file = File::open("input.txt")?;
     let reader = BufReader::new(file);
 
     let mut array: Vec<Vec<i32>> = Vec::new();
@@ -118,8 +122,9 @@ fn main() -> io::Result<()> {
     
     // Iterate over the list of trailheads and process each one
     for coord in &trailheads {
-        let mut visited = HashSet::new();  // Track visited nodes for each traversal
-        total_count += traverse(coord, &array, &mut visited);
+		let mut peaks_for_trailhead: HashSet<Coord> = HashSet::new();
+        traverse(coord, &array, &mut peaks_for_trailhead);
+		total_count += peaks_for_trailhead.len();
     }
 
     println!("Total valid routes: {}", total_count);
