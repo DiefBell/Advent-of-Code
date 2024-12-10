@@ -2,8 +2,6 @@ FROM ubuntu:jammy
 
 SHELL ["/bin/bash", "-c"]
 
-# RUN unminize -y
-
 # Install Ubuntu packages, then clean up
 RUN apt update \
     # Need this package before we can add these apt repos

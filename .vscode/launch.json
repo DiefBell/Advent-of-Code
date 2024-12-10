@@ -80,7 +80,9 @@
 			"request": "launch",
 			"name": "Perl-Debug",
 			"program": "${file}",
-			"cwd": "${fileDirname}"
+			"cwd": "${fileDirname}",
+			"stopOnEntry": false,
+			"reloadModules": true
 		},
 	]
 }

@@ -178,3 +178,4 @@ dist
 *.sln
 ./bin
 ./obj
+.vscode/perl-lang/

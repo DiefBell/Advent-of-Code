@@ -69,6 +69,7 @@
 	"perl.enable": true,
 	"perl.perlCmd": "/root/perl5/perlbrew/perls/perl-5.20.0/bin/perl",
 	"perl.perlInc": [
-		"/root/perl5/perlbrew/perls/perl-5.20.0/lib/site_perl/5.20.0/Perl"
+		"/root/perl5/perlbrew/perls/perl-5.20.0/lib/site_perl/5.20.0/Perl",
+		"./src/day09"
 	]
 }
