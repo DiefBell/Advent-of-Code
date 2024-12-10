@@ -2,6 +2,12 @@
 use strict;
 use warnings;
 
+use lib '.';           # Add the current directory to @INC if necessary
+use Disk;              # Disk class
+use DiskFile;          # DiskFile class
+use EmptySpace;        # EmptySpace class
+use DiskItem;          # DiskItem class
+
 # File path
 # my $file_path = 'input.sample.txt';
 my $file_path = 'input.txt';
@@ -18,25 +24,25 @@ close($fh);
 # Remove any trailing newline or whitespace
 chomp($line);
 
-# Array to hold drive items
-my @items;
+# Create a Disk object
+my $disk = Disk->new();
 
-# File index
+# File index counter
 my $file_index = 0;
 
-# Iterate over every character in the string
+# Parse the input string and populate the Disk
 for my $index (0 .. length($line) - 1) {
-    my $char = substr($line, $index, 1);  # Get the character at position $index
-    my $size = int($char);  # Convert the character to an integer
-    
-    # Use $file_index for even positions and undef for odd positions
-    my $value = $index % 2 == 0 ? $file_index++ : undef;
+    my $char = substr($line, $index, 1);
+    my $size = int($char);
 
-    # Push $value into @items, $size times
-    for(1..$size) {
-        push @items, $value;
+    if ($index % 2 == 0) {
+        $disk->add_item(DiskFile->new($size, $file_index++));
+    } else {
+        $disk->add_item(EmptySpace->new($size));
     }
 }
+
+my @items = $disk->to_array();
 
 my $start_index = 0;
 my $end_index = $#items;  # $#items gives the last index

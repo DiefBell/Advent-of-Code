@@ -82,7 +82,10 @@
 			"program": "${file}",
 			"cwd": "${fileDirname}",
 			"stopOnEntry": true,
-			"reloadModules": true
+			"reloadModules": true,
+			"env": {
+				"PERL5LIB": "${fileDirname}:$PERL5LIB"
+			}
 		},
 	]
 }
