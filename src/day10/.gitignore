@@ -1,0 +1,9 @@
+# Rust build artifacts
+/target/
+
+# Optional: Ignore Cargo.lock for libraries (not for binary projects)
+Cargo.lock
+
+# Backup files and editor swap files
+*.rs.bk
+*.swp

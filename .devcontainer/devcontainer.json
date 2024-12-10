@@ -38,8 +38,10 @@
 				"riccardonovaglia.missinglineendoffile",
 				"richterger.perl",
 				"rocketsoftware.rocket-cobol",
+				"rust-lang.rust-analyzer",
 				"s-vscode-remote.remote-containers",
 				"tamasfe.even-better-toml",
+				"vadimcn.vscode-lldb",
 				"vscjava.vscode-java-pack",
 				"yoavbls.pretty-ts-errors"
             ]
