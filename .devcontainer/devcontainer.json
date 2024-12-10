@@ -21,6 +21,7 @@
         "vscode": {
             "extensions": [
 				"dbaeumer.vscode-eslint",
+				"fortran-lang.linter-gfortran",
 				"golang.go",
 				"mhutchie.git-graph",
 				"ms-azuretools.vscode-docker",

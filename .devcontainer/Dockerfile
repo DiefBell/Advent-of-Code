@@ -93,5 +93,14 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
     && echo "source \$HOME/.cargo/env" >> ~/.bashrc
 
+# Fortran
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    gfortran \
+    gdb \
+    libblas-dev \
+    liblapack-dev \
+    python3-pip
+RUN pip3 install fortls
+
 # Cleanup
 RUN apt auto-remove -y && apt clean -y;

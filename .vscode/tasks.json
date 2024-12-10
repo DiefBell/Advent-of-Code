@@ -93,6 +93,26 @@
 			"options": {
 				"cwd": "${fileDirname}/.."
 			}
+		  },
+		  {
+			"label": "Build Fortran",
+			"type": "shell",
+			"command": "/usr/bin/gfortran",
+			"args": [
+			  "-g",
+			  "${file}",
+			  "-o",
+			  "${fileDirname}/${fileBasenameNoExtension}.out"
+			],
+			"group": {
+			  "kind": "build",
+			  "isDefault": true
+			},
+			"problemMatcher": [],
+			"detail": "Generated task to build Fortran program",
+			"options": {
+				"cwd": "${fileDirname}"
+			}
 		  }
 	],
 	"version": "2.0.0"
