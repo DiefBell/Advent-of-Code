@@ -9,7 +9,8 @@ use EmptySpace;        # EmptySpace class
 use DiskItem;          # DiskItem class
 
 # File path
-my $file_path = 'input.txt';
+# my $file_path = 'input.txt';
+my $file_path = 'input.sample.txt';
 
 # Open the file
 open(my $fh, '<', $file_path) or die "Cannot open file: $!";
@@ -41,10 +42,14 @@ for my $index (0 .. length($line) - 1) {
     }
 }
 
+my $disk_string = $disk->to_string();
+print "Parsed disk: $disk_string\n";
+
 # Call the part_one function to process the disk and calculate the checksum
 part_one($disk);
+part_two($disk);
 
-# Define the part_one function
+# Define the part_one function, takes a more functional approach
 sub part_one {
     my ($disk) = @_;
 
@@ -82,5 +87,23 @@ sub part_one {
         $checksum += $items[$index] * $index;
     }
 
-    print "Total sum: $checksum\n";
+    print "Part one checksum: $checksum\n";
+}
+
+# Part two, more object-oriented
+sub part_two {
+	my($original_disk) = @_;
+	my $disk = $original_disk->deep_copy();
+
+	# Keep getting the last unmoved DiskFile
+	my $last_unmoved_disk_file;
+	while ($last_unmoved_disk_file = $disk->get_last_unmoved_disk_file()) {
+		# Get all empty spaces and find the first one large enough for the DiskFile
+		my @empty_spaces = $disk->get_empty_spaces();
+		my $first_empty_space = (grep { $_->{size} >= $last_unmoved_disk_file->{size} } @empty_spaces)[0];
+		$disk->overwrite($first_empty_space, $last_unmoved_disk_file);
+	}
+
+	my $checksum = $disk->checksum();
+	print "Part two checksum: $checksum\n";
 }
