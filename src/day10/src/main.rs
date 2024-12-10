@@ -2,10 +2,18 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::io::BufReader;
 
+#[derive(Debug)]
+struct Coord {
+    x: usize,
+    y: usize,
+}
+
 fn main() -> io::Result<()> {
     // Open the file for reading
     let file = File::open("input.sample.txt")?;
     let reader = BufReader::new(file);
+
+    let mut array: Vec<Vec<i32>> = Vec::new();
 
     // Iterate through each line in the file
     for line in reader.lines() {
@@ -17,9 +25,23 @@ fn main() -> io::Result<()> {
             .map(|d| d as i32)  // Convert from u32 to i32
             .collect();  // Collect into a vector of integers
 
-        // Print out the parsed line (sub-array of integers for each line)
-        println!("{:?}", parsed_line);
+        // Add parsed line to the 2D array
+        array.push(parsed_line);
     }
+
+	let mut trailheads: Vec<Coord> = Vec::new();
+
+    // Iterate over the 2D array
+    for (y, row) in array.iter().enumerate() {
+        for (x, &value) in row.iter().enumerate() {
+            if value == 0 {
+                trailheads.push(Coord { x, y });
+            }
+        }
+    }
+
+    // Print out the positions of the zeros
+    println!("{:?}", trailheads);
 
     Ok(())
 }
