@@ -81,11 +81,8 @@
 			"name": "Perl-Debug",
 			"program": "${file}",
 			"cwd": "${fileDirname}",
-			"stopOnEntry": true,
-			"reloadModules": true,
-			"env": {
-				"PERL5LIB": "${fileDirname}:$PERL5LIB"
-			}
+			"stopOnEntry": false,
+			"reloadModules": true
 		},
 	]
 }
