@@ -3,14 +3,14 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::io::BufReader;
 
-#[derive(Debug, Hash, Eq, PartialEq, Clone)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq)]
 struct Coord {
     x: usize,
     y: usize,
 }
 
 fn get_neighbours(coord: &Coord, array: &Vec<Vec<i32>>) -> Vec<Coord> {
-    let mut neighbors = Vec::new();
+    let mut neighbours = Vec::new();
 
     // Get the number of rows and columns in the 2D array
     let num_rows = array.len();
@@ -18,53 +18,50 @@ fn get_neighbours(coord: &Coord, array: &Vec<Vec<i32>>) -> Vec<Coord> {
 
     // Check the coordinate above (y-1)
     if coord.y > 0 {
-        neighbors.push(Coord { x: coord.x, y: coord.y - 1 });
+        neighbours.push(Coord { x: coord.x, y: coord.y - 1 });
     }
 
     // Check the coordinate below (y+1)
     if coord.y < num_rows - 1 {
-        neighbors.push(Coord { x: coord.x, y: coord.y + 1 });
+        neighbours.push(Coord { x: coord.x, y: coord.y + 1 });
     }
 
     // Check the coordinate to the left (x-1)
     if coord.x > 0 {
-        neighbors.push(Coord { x: coord.x - 1, y: coord.y });
+        neighbours.push(Coord { x: coord.x - 1, y: coord.y });
     }
 
     // Check the coordinate to the right (x+1)
     if coord.x < num_cols - 1 {
-        neighbors.push(Coord { x: coord.x + 1, y: coord.y });
+        neighbours.push(Coord { x: coord.x + 1, y: coord.y });
     }
 
-    neighbors
+    neighbours
 }
 
 fn traverse(coord: &Coord, array: &Vec<Vec<i32>>, visited: &mut HashSet<Coord>) -> u32 {
-    // Get the height of the current coordinate
     let height = array[coord.y][coord.x];
-    
-    // If we reached the height 9, return 1 to count this path
     if height >= 9 {
         return 1;
     }
 
-    // Check if the coordinate has been visited, and if so, return 0 (don't count it again)
+    // Exit early if we've already visited this coordinate in the current path
     if visited.contains(coord) {
         return 0;
     }
 
-    // Mark the current coordinate as visited
+    // Mark this coordinate as visited for this path
     visited.insert(coord.clone());
 
-    // Get the neighbors of the current coordinate
-    let neighbors = get_neighbours(coord, array);
+    // Get the neighbours of the current coordinate
+    let neighbours = get_neighbours(coord, array);
 
-    // Filter the neighbors where their height is exactly one more than the current height
-    let valid_neighbours: Vec<Coord> = neighbors.into_iter()
-        .filter(|neighbor| array[neighbor.y][neighbor.x] == height + 1)
+    // Filter the neighbours where their height is exactly one more than the current height
+    let valid_neighbours: Vec<Coord> = neighbours.into_iter()
+        .filter(|neighbour| array[neighbour.y][neighbour.x] == height + 1)
         .collect();
 
-    // Exit early if there are no valid neighbors
+    // Exit early if there are no valid neighbours
     if valid_neighbours.is_empty() {
         return 0;
     }
@@ -72,19 +69,19 @@ fn traverse(coord: &Coord, array: &Vec<Vec<i32>>, visited: &mut HashSet<Coord>) 
     // Initialize the count
     let mut count = 0;
 
-    // Iterate over the valid neighbors, recursively traversing them
-    for neighbor in valid_neighbours {
+    // Iterate over the valid neighbours, recursively traversing them
+    for neighbour in valid_neighbours {
         // Recurse and add the result to the count
-        count += traverse(&neighbor, array, visited);
+        count += traverse(&neighbour, array, visited);
     }
 
     count    
 }
 
-
 fn main() -> io::Result<()> {
     // Open the file for reading
     let file = File::open("input.sample.txt")?;
+    // let file = File::open("input.txt")?;
     let reader = BufReader::new(file);
 
     let mut array: Vec<Vec<i32>> = Vec::new();
@@ -103,9 +100,10 @@ fn main() -> io::Result<()> {
         array.push(parsed_line);
     }
 
+    // Find all trailheads (nodes with a height of 0)
     let mut trailheads: Vec<Coord> = Vec::new();
 
-    // Iterate over the 2D array to find the trailheads (cells with height 0)
+    // Iterate over the 2D array
     for (y, row) in array.iter().enumerate() {
         for (x, &value) in row.iter().enumerate() {
             if value == 0 {
@@ -114,15 +112,17 @@ fn main() -> io::Result<()> {
         }
     }
 
-    let mut total_count = 0;
+	println!("Number of trailheads: {}", trailheads.len());
 
-    // Iterate over the list of zero positions and count the valid routes
+    let mut total_count = 0;
+    
+    // Iterate over the list of trailheads and process each one
     for coord in &trailheads {
-        let mut visited = HashSet::new(); // Reset visited for each trailhead
+        let mut visited = HashSet::new();  // Track visited nodes for each traversal
         total_count += traverse(coord, &array, &mut visited);
     }
 
-    println!("Number of valid routes: {}", total_count);
+    println!("Total valid routes: {}", total_count);
 
     Ok(())
 }
