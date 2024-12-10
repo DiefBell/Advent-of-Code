@@ -107,3 +107,6 @@ What is the resulting filesystem checksum?
 our puzzle answer was 6307279963620.
 
 Both parts of this puzzle are complete! They provide two gold stars: ⭐⭐
+
+## Dev Instructions!
+If you're using Perl anyway but Day 09, ensure you add that day's folder to the `"perl.perlInc"` array in `settings.json`.
