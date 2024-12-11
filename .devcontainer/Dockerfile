@@ -100,7 +100,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
     libblas-dev \
     liblapack-dev \
     python3-pip
-RUN pip3 install fortls
+RUN pip3 install --force fortls findent
 
 # Cleanup
 RUN apt auto-remove -y && apt clean -y;

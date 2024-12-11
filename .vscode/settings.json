@@ -71,5 +71,9 @@
 	"perl.perlInc": [
 		"/root/perl5/perlbrew/perls/perl-5.20.0/lib/site_perl/5.20.0/Perl",
 		"./src/day09"
-	]
+	],
+	"[FortranFreeForm]": {
+		"editor.indentSize": 3,
+		"editor.insertSpaces": true
+	}
 }
