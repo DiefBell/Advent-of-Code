@@ -6,10 +6,11 @@ program advent_of_code_2024
    integer :: i, num_items, ios, j, count, depth_result
    integer, parameter :: max_items = 100
    integer, dimension(max_items) :: values
+   real :: start_time, end_time, elapsed_time
 
    ! Open the file
-   ! open(unit=10, file="input.sample.txt", status="old", action="read")
    open(unit=10, file="input.txt", status="old", action="read")
+   ! open(unit=10, file="input.sample.txt", status="old", action="read")
 
    ! Read the single line from the file
    read(10, '(A)', iostat=ios) line
@@ -39,6 +40,9 @@ program advent_of_code_2024
       line = adjustl(line(i+1:))
    end do
 
+   ! Start the timer before processing integers with blink
+   call cpu_time(start_time)
+
    ! Process each integer with blink and accumulate results
    count = 0
    do j = 1, num_items
@@ -46,8 +50,15 @@ program advent_of_code_2024
       count = count + depth_result
    end do
 
-   ! Log the final count
-   write(*,*) CHAR(10) // CHAR(10) //  "Final count after processing all values: ", count, CHAR(10) // CHAR(10)
+   ! Stop the timer after processing
+   call cpu_time(end_time)
+
+   ! Calculate elapsed time
+   elapsed_time = end_time - start_time
+
+   ! Log the final count and elapsed time
+   write(*,*) CHAR(10) // CHAR(10) // "Final count after processing all values: ", count
+   write(*,*) "Elapsed time for processing: ", elapsed_time * 1000, " milliseconds" // CHAR(10) // CHAR(10)
 
    close(10)
 
@@ -112,15 +123,11 @@ contains
       ! Integer division for res_value
       res_left = value / divisor
 
-      ! Modulo operation and multiplication by divisor for res_digits
+      ! Modulo operation for res_digits
       res_right = mod(value, divisor)
 
       ! write(*,*) CHAR(9) // "Split '", value, "' into '", res_left, "' and '", res_right, "'." // CHAR(10)
 
    end subroutine split_stone
 
-
-
-
 end program advent_of_code_2024
-
