@@ -8,7 +8,8 @@ program advent_of_code_2024
    integer, dimension(max_items) :: values
 
    ! Open the file
-   open(unit=10, file="input.sample.txt", status="old", action="read")
+   ! open(unit=10, file="input.sample.txt", status="old", action="read")
+   open(unit=10, file="input.txt", status="old", action="read")
 
    ! Read the single line from the file
    read(10, '(A)', iostat=ios) line
@@ -46,7 +47,7 @@ program advent_of_code_2024
    end do
 
    ! Log the final count
-   print *, "Final count after processing all values: ", count
+   write(*,*) CHAR(10) // CHAR(10) //  "Final count after processing all values: ", count, CHAR(10) // CHAR(10)
 
    close(10)
 
@@ -90,9 +91,9 @@ contains
       end if
    end function get_num_digits
 
-   subroutine split_stone(value, num_digits, res_value, res_digits)
+   subroutine split_stone(value, num_digits, res_left, res_right)
       integer, intent(in) :: value, num_digits
-      integer, intent(out) :: res_value, res_digits
+      integer, intent(out) :: res_left, res_right
       integer :: divisor
 
       ! Check if num_digits is even
@@ -101,14 +102,20 @@ contains
          stop
       end if
 
+      ! write(*,*) CHAR(9) // "Splitting '", value, "' with '", num_digits, "' digits."
+
       ! Create divisor as 10^num_digits
-      divisor = 10**num_digits
+      divisor = 10**(num_digits / 2)
+
+      ! write(*,*) CHAR(9) // "Divisor: '", divisor, "'."
 
       ! Integer division for res_value
-      res_value = value / divisor
+      res_left = value / divisor
 
       ! Modulo operation and multiplication by divisor for res_digits
-      res_digits = mod(value, divisor) * divisor
+      res_right = mod(value, divisor)
+
+      ! write(*,*) CHAR(9) // "Split '", value, "' into '", res_left, "' and '", res_right, "'." // CHAR(10)
 
    end subroutine split_stone
 
