@@ -58,7 +58,7 @@
 			"console": "internalConsole"
 		},
 		{
-			"name": "Go: Launch Current File",
+			"name": "Go",
 			"type": "go",
 			"internalConsoleOptions": "openOnSessionStart",
 			"request": "launch",
@@ -69,23 +69,23 @@
 			"console": "internalConsole"
 		},
 		{
-            "name": "R: Debug file",
-            "type": "R-Debugger",
-            "request": "launch",
-            "file": "${file}",
+			"name": "R",
+			"type": "R-Debugger",
+			"request": "launch",
+			"file": "${file}",
 			"workingDirectory": "${fileDirname}"
-        },
+		},
 		{
 			"type": "perl",
 			"request": "launch",
-			"name": "Perl-Debug",
+			"name": "Perl",
 			"program": "${file}",
 			"cwd": "${fileDirname}",
 			"stopOnEntry": false,
 			"reloadModules": true
 		},
 		{
-			"name": "Launch Rust Program",
+			"name": "Rust",
 			"type": "lldb",
 			"request": "launch",
 			"program": "${fileDirname}/../target/debug/advent_of_code_2024",
@@ -95,7 +95,7 @@
 			"internalConsoleOptions": "openOnFirstSessionStart"
 		},
 		{
-			"name": "Debug Fortran",
+			"name": "Fortran",
 			"type": "cppdbg",
 			"request": "launch",
 			"internalConsoleOptions": "openOnFirstSessionStart",
@@ -107,20 +107,28 @@
 			"externalConsole": false,
 			"MIMode": "gdb",
 			"setupCommands": [
-			  {
-				"description": "Enable pretty-printing for gdb",
-				"text": "-enable-pretty-printing",
-				"ignoreFailures": true
-			  }
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
 			],
 			"miDebuggerPath": "/usr/bin/gdb",
 			"preLaunchTask": "Build Fortran",
 			"miDebuggerArgs": "",
 			"logging": {
-			  "moduleLoad": false,
-			  "trace": false,
-			  "engineLogging": false
+				"moduleLoad": false,
+				"trace": false,
+				"engineLogging": false
 			}
-		  }
+		},
+		{
+			"name": "Ruby",
+			"type": "Ruby",
+			"request": "launch",
+			"program": "${file}",
+			"cwd": "${fileDirname}",
+			"internalConsoleOptions": "openOnSessionStart"
+		},
 	]
 }

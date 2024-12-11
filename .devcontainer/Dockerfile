@@ -102,5 +102,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
     python3-pip
 RUN pip3 install --force fortls findent
 
+# Ruby
+RUN DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    ruby-full
+RUN gem install debug ruby-debug-ide
+
 # Cleanup
 RUN apt auto-remove -y && apt clean -y;
