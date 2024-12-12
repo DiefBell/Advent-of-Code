@@ -12,6 +12,15 @@ class Coord
     other.is_a?(Coord) && self.x == other.x && self.y == other.y
   end
 
+  # Proper equality check for sets
+  def eql?(other)
+    other.is_a?(Coord) && @x == other.x && @y == other.y
+  end
+
+  def hash
+    [@x, @y].hash  # Use the tuple of x and y for the hash code
+  end
+
   def to_s
     "(#{x}, #{y})"
   end
@@ -106,10 +115,10 @@ class Plot
     @coord = coord
 
     fences = [
-      Coord.new(coord.x, coord.y),
-      Coord.new(coord.x, coord.y + 1),
-      Coord.new(coord.x + 1, coord.y),
-      Coord.new(coord.x + 1, coord.y + 1)
+      Coord.new(coord.x - 0.5, coord.y),
+      Coord.new(coord.x + 0.5, coord.y ),
+      Coord.new(coord.x, coord.y + 0.5),
+      Coord.new(coord.x, coord.y - 0.5)
     ]
 
     @region = Region.new(letter, [self], fences)
@@ -138,14 +147,11 @@ class Region
     
     # Merge the plots of the two regions (ensure uniqueness)
     @plots |= other.plots
-
-    # Merge fences by merging only unique ones, then removing "shared" fences
-    fences_to_remove = (other.fences & @fences)
-    @fences |= other.fences  # Union of fences
-
-    # Remove shared fences from both regions
-    @fences -= fences_to_remove
-
+  
+    # Merge the fences but discard shared ones
+    # (the symmetric difference)
+    @fences = @fences ^ other.fences
+  
     # Return self to allow chaining
     self
   end
@@ -159,10 +165,15 @@ class Region
   end
 
   def to_s
-    "Region with letter '#{@letter}' has #{@plots.length} plots and #{@fences.length} fences."
+    cost = @get_cost
+    "[Region] Letter '#{@letter}', " +
+    "Plots: #{@plots.length}, " +
+    "Fences: #{@fences.length}, " +
+    "Cost: #{get_cost}"
   end
 end
 
 puts "\n"
-garden = Garden.new("input.sample.txt")
+# garden = Garden.new("input.sample.txt")
+garden = Garden.new("input.txt")
 puts garden.to_s
