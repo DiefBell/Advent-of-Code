@@ -2,13 +2,12 @@ require 'set'
 
 class Coord
   attr_accessor :x, :y
-  
+
   def initialize(x, y)
     @x = x
     @y = y
   end
 
-  # Overloading the == method to compare Coords by their coordinates
   def ==(other)
     other.is_a?(Coord) && self.x == other.x && self.y == other.y
   end
@@ -24,62 +23,65 @@ class Garden
     lines = file_content.split("\n")
     @height = lines.length
     @width = lines.first.length
-    @regions = Set.new  # Use Set to store unique regions
+    @regions = Set.new
 
     # Create @plots and @regions
     @plots = lines.each_with_index.map do |row, row_index|
       row.chars.each_with_index.map do |char, col_index|
-        coord = Coord.new(col_index, row_index)  # Create a Coord based on row/col position
-        plot = Plot.new(char, coord)  # Pass Coord to Plot constructor
+        coord = Coord.new(col_index, row_index)  
+        plot = Plot.new(char, coord)  
         @regions.add(plot.region)  # Add the Plot's region to @regions
-        plot  # Return the Plot object
+        plot  
       end
     end
 
-    # Merge regions row-by-row
-    @plots.each_with_index do |row, row_index|
-      row.each_with_index do |plot, col_index|
-        next_plot = row[col_index + 1] if col_index + 1 < row.length  # Get the next plot in the row
-
-        if next_plot && plot.letter == next_plot.letter && plot.region != next_plot.region
-          merged_region = plot.region + next_plot.region
-
-          # Remove old regions from @regions
+    (0...@height).each do |row_index|
+      (0...(@width - 1)).each do |col_index|
+        plot = @plots[row_index][col_index]
+        next_plot = @plots[row_index][col_index + 1]
+    
+        same_region = plot.region == next_plot.region
+    
+        if plot.letter == next_plot.letter && !same_region
+          # Absorb next_plot.region into plot.region
+          region = plot.region
+    
+          # Remove both regions from @regions before modifying
           @regions.delete(plot.region)
           @regions.delete(next_plot.region)
-
-          # Add the merged region to @regions
-          @regions.add(merged_region)
-
-          # Set the new region for both plots
-          plot.region = merged_region
-          next_plot.region = merged_region
+    
+          # Absorb next_plot's region into plot's region
+          region.absorb(next_plot.region)
+    
+          # Re-add the merged region
+          @regions.add(region)
         end
       end
     end
-
-    # Merge regions column-by-column
-    @plots.each_with_index do |row, row_index|
-      row.each_with_index do |plot, col_index|
-        next_plot = @plots[row_index + 1] && @plots[row_index + 1][col_index]  # Get the plot below in the same column
-
-        if next_plot && plot.letter == next_plot.letter && plot.region != next_plot.region
-          merged_region = plot.region + next_plot.region
-
-          # Remove old regions from @regions
+    
+    (0...@width).each do |col_index|
+      (0...(@height - 1)).each do |row_index|
+        plot = @plots[row_index][col_index]
+        next_plot = @plots[row_index + 1][col_index]
+    
+        same_region = plot.region == next_plot.region
+    
+        if plot.letter == next_plot.letter && !same_region
+          # Absorb next_plot.region into plot.region
+          region = plot.region
+    
+          # Remove both regions from @regions before modifying
           @regions.delete(plot.region)
           @regions.delete(next_plot.region)
-
-          # Add the merged region to @regions
-          @regions.add(merged_region)
-
-          # Set the new region for both plots
-          plot.region = merged_region
-          next_plot.region = merged_region
+    
+          # Absorb next_plot's region into plot's region
+          region.absorb(next_plot.region)
+    
+          # Re-add the merged region
+          @regions.add(region)
         end
       end
     end
-
 
     # Print to_s of each region in @regions
     @regions.each do |region|
@@ -88,14 +90,13 @@ class Garden
   end
 
   def to_s
-    total_cost = @regions.sum { |region| region.get_cost }  # Sum the cost of each region
+    total_cost = @regions.sum { |region| region.get_cost }
     "Width: #{@width}, " +
     "Height: #{@height}. " +
     "Unique regions: #{@regions.length}. " +
     "Total cost: #{total_cost}"
   end
 end
-
 
 class Plot
   attr_accessor :letter, :region, :coord
@@ -113,6 +114,10 @@ class Plot
 
     @region = Region.new(letter, [self], fences)
   end
+
+  def to_s
+    "Plot has letter '#{@letter}' and coord #{@coord}"
+  end
 end
 
 class Region
@@ -120,20 +125,29 @@ class Region
 
   def initialize(letter, plots, fences)
     @letter = letter
-    @plots = plots
-    @fences = fences
+    @plots = Set.new(plots)  # Use Set to ensure uniqueness
+    @fences = Set.new(fences)  # Use Set to ensure uniqueness
   end
 
-  # Define the '+' operator to merge two regions
-  def +(other)
-    # Merge the plots and fences of the two regions
-    merged_plots = @plots + other.plots
-    # Merges arrays but removes any elements that appear in both
-    # i.e. removes shared fences
-    merged_fences = (@fences - other.fences) + (other.fences - @fences)
+  # Absorbs "other" region into this one
+  def absorb(other)
+    # Update the region of the plots being absorbed
+    other.plots.each do |plot|
+      plot.region = self
+    end
+    
+    # Merge the plots of the two regions (ensure uniqueness)
+    @plots |= other.plots
 
-    # Return a new Region object with the merged plots and fences
-    Region.new(@letter, merged_plots, merged_fences)
+    # Merge fences by merging only unique ones, then removing "shared" fences
+    fences_to_remove = (other.fences & @fences)
+    @fences |= other.fences  # Union of fences
+
+    # Remove shared fences from both regions
+    @fences -= fences_to_remove
+
+    # Return self to allow chaining
+    self
   end
 
   def get_area
@@ -149,5 +163,6 @@ class Region
   end
 end
 
+puts "\n"
 garden = Garden.new("input.sample.txt")
 puts garden.to_s
