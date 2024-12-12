@@ -186,7 +186,7 @@ class Region
     @fences = Set.new(fences)  # Use Set to ensure uniqueness
   end
 
-  # Sort vertical fences (x coordinate off by 0.5)
+  # Sort vertical fences and return them as a Set
   def sort_vertical_fences
     # Select only vertical fences (where x is off by 0.5)
     vertical_fences = @fences.select { |f| f.x != f.x.to_i }
@@ -199,14 +199,15 @@ class Region
       fences.sort_by! { |f| f.y }  # Sort fences within the group by y
     end
 
-    # Now sort the groups by x coordinate
+    # Now sort the groups by x coordinate and flatten the array
     sorted_vertical_fences = vertical_groups.sort_by { |x, _| x }.flat_map { |_, fences| fences }
 
-    # Return the sorted list of fences
-    sorted_vertical_fences
+    # Return the sorted list as a Set to ensure uniqueness
+    Set.new(sorted_vertical_fences)
   end
 
-  # Sort horizontal fences (y coordinate off by 0.5)
+
+  # Sort horizontal fences and return them as a Set
   def sort_horizontal_fences
     # Select only horizontal fences (where y is off by 0.5)
     horizontal_fences = @fences.select { |f| f.y != f.y.to_i }
@@ -219,11 +220,11 @@ class Region
       fences.sort_by! { |f| f.x }  # Sort fences within the group by x
     end
 
-    # Now sort the groups by y coordinate
+    # Now sort the groups by y coordinate and flatten the array
     sorted_horizontal_fences = horizontal_groups.sort_by { |y, _| y }.flat_map { |_, fences| fences }
 
-    # Return the sorted list of fences
-    sorted_horizontal_fences
+    # Return the sorted list as a Set to ensure uniqueness
+    Set.new(sorted_horizontal_fences)
   end
 
   # Calculates the number of sides for this region
@@ -300,8 +301,8 @@ end
 
 puts "\n"
 # garden = Garden.new("input.sample.txt")
-# garden = Garden.new("input.test.txt")
-garden = Garden.new("input.txt")
+garden = Garden.new("input.test.txt")
+# garden = Garden.new("input.txt")
 puts garden.to_s
 
 # 608664 is too low
