@@ -20,6 +20,7 @@ Module Program
 
     ' Function to process the games and calculate the total minimum cost
 	Sub PartOne(games As List(Of Game))
+		Console.WriteLine(Environment.NewLine & Environment.NewLine & "===== PART 2 =====")
 		' Variable to hold the total minimum cost
 		Dim totalMinCost As Double = 0
 	
@@ -43,16 +44,16 @@ Module Program
 	
 				' Add the cost of the current game to the total minimum cost
 				totalMinCost += gameCost
-				Console.WriteLine(Environment.NewLine & $"[part 1] Target solvable for game: {game}")
+				Console.WriteLine(Environment.NewLine & $"Target solvable for game: {game}")
 			Else
 				' Mark the game as unsolvable by setting the cost to -1
 				game.SetCost(-1)
-				Console.WriteLine(Environment.NewLine & $"[part 1] Target not solvable for game: {game}")
+				Console.WriteLine(Environment.NewLine & $"Target not solvable for game: {game}")
 			End If
 		Next
 	
 		' Output the total minimum cost
-		Console.WriteLine(Environment.NewLine & $"[part 1] Total minimum cost across all games: {totalMinCost}")
+		Console.WriteLine(Environment.NewLine & $"Total minimum cost across all games: {totalMinCost}")
 	End Sub
 
 	Sub PartTwo(games As List(Of Game))
@@ -73,7 +74,7 @@ Module Program
 	
 				' Use DP to check if the target is solvable
 				If DPHelper.IsTargetSolvable(targetX, targetY, buttonA, buttonB) Then
-					Console.WriteLine(Environment.NewLine & $"[part 2] Target solvable for game: {game}")
+					Console.WriteLine(Environment.NewLine & $"Target solvable for game: {game}")
 					' If solvable, solve the ILP for the target (using ILPSolver)
 					Dim ilpData = game.GetILPData()
 					Dim objectiveFunction As Func(Of Double, Double, Double) = ilpData.Item1
@@ -88,7 +89,7 @@ Module Program
 					totalMinCost += game.Cost + result.Item1 * game.ButtonA.Value + result.Item2 * game.ButtonB.Value
 				Else
 					' Log if the target is not solvable
-					Console.WriteLine(Environment.NewLine & $"[part 2] Target not solvable for game: {game}")
+					Console.WriteLine(Environment.NewLine & $"Target not solvable for game: {game}")
 				End If
 			Else
 				' When game.Cost is -1, do a check with DPHelper for (10000000000000 + Prize.x, 10000000000000 + Prize.y)
@@ -99,15 +100,15 @@ Module Program
 	
 				' Use DPHelper to check if the target is solvable with the new coordinates
 				If DPHelper.IsTargetSolvable(targetX, targetY, buttonA, buttonB) Then
-					Console.WriteLine(Environment.NewLine & $"[part 2] Target solvable for game: {game}")
+					Console.WriteLine(Environment.NewLine & $"Target solvable for game: {game}")
 				Else
-					Console.WriteLine(Environment.NewLine & $"[part 2] Target not solvable for game: {game}")
+					Console.WriteLine(Environment.NewLine & $"Target not solvable for game: {game}")
 				End If
 			End If
 		Next
 	
 		' Output the total minimum cost for Part Two
-		Console.WriteLine($"[part 2] Total minimum cost across all solvable games (Part Two): {totalMinCost}")
+		Console.WriteLine(Environment.NewLine & $"Total minimum cost across all solvable games (Part Two): {totalMinCost}")
 	End Sub
 		
 		
