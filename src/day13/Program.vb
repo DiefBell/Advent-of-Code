@@ -1,58 +1,7 @@
 Imports System
 Imports System.IO
 
-Public Structure Vector2
-    Public X As Double
-    Public Y As Double
-
-    ' Constructor for Vector2
-    Public Sub New(x As Double, y As Double)
-        Me.X = x
-        Me.Y = y
-    End Sub
-
-    ' Override ToString for better display
-    Public Overrides Function ToString() As String
-        Return $"({X}, {Y})"
-    End Function
-End Structure
-
-Public Structure Button
-    Public Value As Integer
-    Public Direction As Vector2
-
-    ' Constructor for Button
-    Public Sub New(value As Integer, direction As Vector2)
-        Me.Value = value
-        Me.Direction = direction
-    End Sub
-
-    ' Override ToString for better display
-    Public Overrides Function ToString() As String
-        Return $"Button(Value: {Value}, Direction: {Direction})"
-    End Function
-End Structure
-
-Public Class Game
-    ' Fields for ButtonA and ButtonB
-    Public Property ButtonA As Button
-    Public Property ButtonB As Button
-
-    ' Field for the Prize (Vector2)
-    Public Property Prize As Vector2
-
-    ' Constructor to initialize Game
-    Public Sub New(buttonA As Button, buttonB As Button, prize As Vector2)
-        Me.ButtonA = buttonA
-        Me.ButtonB = buttonB
-        Me.Prize = prize
-    End Sub
-
-    ' Method to display Game details
-    Public Overrides Function ToString() As String
-        Return $"Game(ButtonA: {ButtonA}, ButtonB: {ButtonB}, Prize: {Prize})"
-    End Function
-End Class
+Namespace AdventOfCode
 
 Module Program
     Sub Main()
@@ -133,3 +82,4 @@ Module Program
     End Function
 End Module
 
+End Namespace
