@@ -14,14 +14,25 @@ Public Class Game
         Me.Prize = prize
     End Sub
 
+    ' Method to move the Prize by 10000000000000 in both X and Y
+    Public Sub MovePrize()
+		' Create a new Vector2 and assign it to Prize
+        Prize = New Vector2(Prize.X + 10000000000000, Prize.Y + 10000000000000)
+    End Sub
+
     ' Generate inputs for ILPSolver
-    Public Function GetILPData() As (Func(Of Integer, Integer, Double), Func(Of Integer, Integer, Boolean), Integer, Integer)
+    Public Function GetILPData() As (
+		Func(Of Double, Double, Double),
+		Func(Of Double, Double, Boolean),
+		Double,
+		Double
+	)
         ' Objective function: Minimize cost
-        Dim objectiveFunction As Func(Of Integer, Integer, Double) =
+        Dim objectiveFunction As Func(Of Double, Double, Double) =
             Function(nA, nB) nA * ButtonA.Value + nB * ButtonB.Value
 
         ' Constraint function: Match prize location
-        Dim constraintFunction As Func(Of Integer, Integer, Boolean) =
+        Dim constraintFunction As Func(Of Double, Double, Boolean) =
             Function(nA, nB)
                 Dim xResult As Double = nA * ButtonA.Direction.X + nB * ButtonB.Direction.X
                 Dim yResult As Double = nA * ButtonA.Direction.Y + nB * ButtonB.Direction.Y
@@ -29,8 +40,8 @@ Public Class Game
             End Function
 
         ' Upper bounds for search
-        Dim maxNA As Integer = Math.Ceiling(Prize.X / Math.Max(1, ButtonA.Direction.X))
-        Dim maxNB As Integer = Math.Ceiling(Prize.Y / Math.Max(1, ButtonB.Direction.Y))
+        Dim maxNA As Double = Math.Ceiling(Prize.X / Math.Max(1, ButtonA.Direction.X))
+        Dim maxNB As Double = Math.Ceiling(Prize.Y / Math.Max(1, ButtonB.Direction.Y))
 
         Return (objectiveFunction, constraintFunction, maxNA, maxNB)
     End Function
