@@ -7,21 +7,28 @@ Public Class Game
     Public Property ButtonA As Button
     Public Property ButtonB As Button
     Public Property Prize As Vector2
-    Public Property Cost As Double? ' Nullable Double to store cost or -1 for unsolvable
+    Public Property CostOne As Double? ' Nullable Double to store cost or -1 for unsolvable
+	Public Property CostTwo As Double? ' Nullable Double to store cost or -1 for unsolvable
 
     ' Constructor
     Public Sub New(buttonA As Button, buttonB As Button, prize As Vector2, id As Integer)
         Me.ButtonA = buttonA
         Me.ButtonB = buttonB
         Me.Prize = prize
-        Me.Cost = Nothing ' Default to null for unsolved games
+        Me.CostOne = Nothing ' Default to null for unsolved games
+        Me.CostTwo = Nothing ' Default to null for unsolved games
         Me.ID = id ' Initialize the ID
     End Sub
 
     ' Set the cost, use -1 for unsolvable games
-    Public Sub SetCost(cost As Double)
-        Me.Cost = cost
+    Public Sub SetCostOne(cost As Double)
+        Me.CostOne = cost
     End Sub
+
+	' Set the cost, use -1 for unsolvable games
+	Public Sub SetCostTwo(cost As Double)
+		Me.CostTwo = cost
+	End Sub
 
     ' Generate inputs for ILPSolver
     Public Function GetILPData() As (
@@ -51,7 +58,11 @@ Public Class Game
 
     ' ToString override for display
     Public Overrides Function ToString() As String
-        Return $"Game(ID: {ID}, ButtonA: {ButtonA}, ButtonB: {ButtonB}, Prize: {Prize}, Cost: {If(Cost = -1, "Unsolvable", Cost.ToString())})"
+        Return $"Game(ID: {ID}, " +
+			$"ButtonA: {ButtonA}, ButtonB: {ButtonB}, " +
+			$"Prize: {Prize}, " +
+			$"CostOne: {If(CostOne = -1, "Unsolvable", CostOne.ToString())}, " +
+			$"CostTwo: {If(CostTwo = -1, "Unsolvable", CostTwo.ToString())})"
     End Function
 
     ' Static method to parse the games from a file
