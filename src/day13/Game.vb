@@ -48,9 +48,9 @@ Public Class Game
     End Function
 
     ' ToString override for display
-    Public Overrides Function ToString() As String
-        Return $"Game(ButtonA: {ButtonA}, ButtonB: {ButtonB}, Prize: {Prize}, Cost: {If(Cost.HasValue, Cost.Value.ToString(), "Unsolvable")})"
-    End Function
+	Public Overrides Function ToString() As String
+		Return $"Game(ButtonA: {ButtonA}, ButtonB: {ButtonB}, Prize: {Prize}, Cost: {If(Cost = -1, "Unsolvable", Cost.ToString())})"
+	End Function	
 
     ' Static method to parse the games from a file
     Public Shared Function ParseGames(filePath As String) As List(Of Game)
