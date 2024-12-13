@@ -3,17 +3,19 @@ Imports System.Text.RegularExpressions
 
 Namespace AdventOfCode
 Public Class Game
+    Public Property ID As Integer ' Add ID property
     Public Property ButtonA As Button
     Public Property ButtonB As Button
     Public Property Prize As Vector2
-	Public Property Cost As Double? ' Nullable Double to store cost or -1 for unsolvable
+    Public Property Cost As Double? ' Nullable Double to store cost or -1 for unsolvable
 
     ' Constructor
-    Public Sub New(buttonA As Button, buttonB As Button, prize As Vector2)
+    Public Sub New(buttonA As Button, buttonB As Button, prize As Vector2, id As Integer)
         Me.ButtonA = buttonA
         Me.ButtonB = buttonB
         Me.Prize = prize
         Me.Cost = Nothing ' Default to null for unsolved games
+        Me.ID = id ' Initialize the ID
     End Sub
 
     ' Set the cost, use -1 for unsolvable games
@@ -48,9 +50,9 @@ Public Class Game
     End Function
 
     ' ToString override for display
-	Public Overrides Function ToString() As String
-		Return $"Game(ButtonA: {ButtonA}, ButtonB: {ButtonB}, Prize: {Prize}, Cost: {If(Cost = -1, "Unsolvable", Cost.ToString())})"
-	End Function	
+    Public Overrides Function ToString() As String
+        Return $"Game(ID: {ID}, ButtonA: {ButtonA}, ButtonB: {ButtonB}, Prize: {Prize}, Cost: {If(Cost = -1, "Unsolvable", Cost.ToString())})"
+    End Function
 
     ' Static method to parse the games from a file
     Public Shared Function ParseGames(filePath As String) As List(Of Game)
@@ -60,10 +62,15 @@ Public Class Game
         ' Accumulate lines for each game block
         Dim currentBlock As New List(Of String)()
 
+        ' Counter for the ID
+        Dim currentID As Integer = 1
+
         For Each line As String In lines
             If String.IsNullOrWhiteSpace(line) Then
                 If currentBlock.Count = 3 Then
-                    games.Add(ParseGameBlock(currentBlock))
+                    ' Pass the currentID when creating the game
+                    games.Add(ParseGameBlock(currentBlock, currentID))
+                    currentID += 1 ' Increment ID for the next game
                 End If
                 currentBlock.Clear()
             Else
@@ -73,14 +80,14 @@ Public Class Game
 
         ' Handle the last block
         If currentBlock.Count = 3 Then
-            games.Add(ParseGameBlock(currentBlock))
+            games.Add(ParseGameBlock(currentBlock, currentID))
         End If
 
         Return games
     End Function
 
     ' Helper method to parse each game block
-    Private Shared Function ParseGameBlock(block As List(Of String)) As Game
+    Private Shared Function ParseGameBlock(block As List(Of String), id As Integer) As Game
         ' Parse Button A (with value 3)
         Dim buttonA = ParseButton(block(0), 3)
 
@@ -90,8 +97,8 @@ Public Class Game
         ' Parse Prize
         Dim prize = ParseVector(block(2))
 
-        ' Create and return the Game object
-        Return New Game(buttonA, buttonB, prize)
+        ' Create and return the Game object with the ID
+        Return New Game(buttonA, buttonB, prize, id)
     End Function
 
     ' Helper method to parse a button line
