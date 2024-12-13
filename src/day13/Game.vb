@@ -6,19 +6,19 @@ Public Class Game
     Public Property ButtonA As Button
     Public Property ButtonB As Button
     Public Property Prize As Vector2
-    Public Property Possible As Boolean? ' Nullable Boolean flag (True/False/Null)
+	Public Property Cost As Double? ' Nullable Double to store cost or -1 for unsolvable
 
     ' Constructor
     Public Sub New(buttonA As Button, buttonB As Button, prize As Vector2)
         Me.ButtonA = buttonA
         Me.ButtonB = buttonB
         Me.Prize = prize
-        Me.Possible = Nothing ' Default to null
+        Me.Cost = Nothing ' Default to null for unsolved games
     End Sub
 
-    ' Method to set the Possible flag
-    Public Sub SetPossible(isPossible As Boolean)
-        Me.Possible = isPossible
+    ' Set the cost, use -1 for unsolvable games
+    Public Sub SetCost(cost As Double)
+        Me.Cost = cost
     End Sub
 
     ' Generate inputs for ILPSolver
@@ -49,7 +49,7 @@ Public Class Game
 
     ' ToString override for display
     Public Overrides Function ToString() As String
-        Return $"Game(ButtonA: {ButtonA}, ButtonB: {ButtonB}, Prize: {Prize}, Possible: {Possible?.ToString()})"
+        Return $"Game(ButtonA: {ButtonA}, ButtonB: {ButtonB}, Prize: {Prize}, Cost: {If(Cost.HasValue, Cost.Value.ToString(), "Unsolvable")})"
     End Function
 
     ' Static method to parse the games from a file
