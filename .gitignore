@@ -175,7 +175,10 @@ dist
 .DS_Store
 
 # .NET likes to shove stuff in the root sometimes
-*.sln
+advent-of-code-2024.sln
 ./bin
 ./obj
 .vscode/perl-lang/
+
+# LPSolve
+lp_solve_5.5/

@@ -78,3 +78,6 @@ Prize: X=10000000018641, Y=10000000010279
 Now, it is only possible to win a prize on the second and fourth claw machines. Unfortunately, it will take many more than `100` presses to do so.
 
 Using the corrected prize coordinates, figure out how to win as many prizes as possible. What is the fewest tokens you would have to spend to win all possible prizes?
+
+# Dev Notes
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
