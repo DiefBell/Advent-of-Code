@@ -6,27 +6,28 @@ Public Class Game
     Public Property ButtonA As Button
     Public Property ButtonB As Button
     Public Property Prize As Vector2
+    Public Property Possible As Boolean? ' Nullable Boolean flag (True/False/Null)
 
     ' Constructor
     Public Sub New(buttonA As Button, buttonB As Button, prize As Vector2)
         Me.ButtonA = buttonA
         Me.ButtonB = buttonB
         Me.Prize = prize
+        Me.Possible = Nothing ' Default to null
     End Sub
 
-    ' Method to move the Prize by 10000000000000 in both X and Y
-    Public Sub MovePrize()
-		' Create a new Vector2 and assign it to Prize
-        Prize = New Vector2(Prize.X + 10000000000000, Prize.Y + 10000000000000)
+    ' Method to set the Possible flag
+    Public Sub SetPossible(isPossible As Boolean)
+        Me.Possible = isPossible
     End Sub
 
     ' Generate inputs for ILPSolver
     Public Function GetILPData() As (
-		Func(Of Double, Double, Double),
-		Func(Of Double, Double, Boolean),
-		Double,
-		Double
-	)
+        Func(Of Double, Double, Double),
+        Func(Of Double, Double, Boolean),
+        Double,
+        Double
+    )
         ' Objective function: Minimize cost
         Dim objectiveFunction As Func(Of Double, Double, Double) =
             Function(nA, nB) nA * ButtonA.Value + nB * ButtonB.Value
@@ -48,7 +49,7 @@ Public Class Game
 
     ' ToString override for display
     Public Overrides Function ToString() As String
-        Return $"Game(ButtonA: {ButtonA}, ButtonB: {ButtonB}, Prize: {Prize})"
+        Return $"Game(ButtonA: {ButtonA}, ButtonB: {ButtonB}, Prize: {Prize}, Possible: {Possible?.ToString()})"
     End Function
 
     ' Static method to parse the games from a file

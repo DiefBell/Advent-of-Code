@@ -19,56 +19,62 @@ Module Program
     End Sub
 
     ' Function to process the games and calculate the total minimum cost
-    Sub PartOne(games As List(Of Game))
-        ' Variable to hold the total minimum cost
-        Dim totalMinCost As Double = 0
-
-        ' Iterate through each game
-        For Each game As Game In games
-            ' Get ILP data from the game
-            Dim ilpData = game.GetILPData()
-            Dim objectiveFunction As Func(Of Double, Double, Double) = ilpData.Item1
-            Dim constraintFunction As Func(Of Double, Double, Boolean) = ilpData.Item2
-            Dim maxNA As Double = ilpData.Item3
-            Dim maxNB As Double = ilpData.Item4
-
-            ' Solve the ILP for the current game
-            Dim result = ILPSolver.Solve(objectiveFunction, constraintFunction, maxNA, maxNB)
-
-            ' Add the cost of the current game to the total minimum cost
-            totalMinCost += result.Item1 * game.ButtonA.Value + result.Item2 * game.ButtonB.Value
-        Next
-
-        ' Output the total minimum cost
-        Console.WriteLine($"Total minimum cost across all games: {totalMinCost}")
-    End Sub
+	Sub PartOne(games As List(Of Game))
+		' Variable to hold the total minimum cost
+		Dim totalMinCost As Double = 0
+	
+		' Iterate through each game
+		For Each game As Game In games
+			' Get ILP data from the game
+			Dim ilpData = game.GetILPData()
+			Dim objectiveFunction As Func(Of Double, Double, Double) = ilpData.Item1
+			Dim constraintFunction As Func(Of Double, Double, Boolean) = ilpData.Item2
+			Dim maxNA As Double = ilpData.Item3
+			Dim maxNB As Double = ilpData.Item4
+	
+			' Solve the ILP for the current game
+			Dim result = ILPSolver.Solve(objectiveFunction, constraintFunction, maxNA, maxNB)
+	
+			' Check if both items in the result tuple are non-zero
+			If result.Item1 <> 0 AndAlso result.Item2 <> 0 Then
+				game.SetPossible(True) ' Game is solvable
+				' Add the cost of the current game to the total minimum cost
+				totalMinCost += result.Item1 * game.ButtonA.Value + result.Item2 * game.ButtonB.Value
+			Else
+				game.SetPossible(False) ' Game is not solvable
+			End If
+		Next
+	
+		' Output the total minimum cost
+		Console.WriteLine($"Total minimum cost across all games: {totalMinCost}")
+	End Sub
 
     ' Function to process the games with moved prize and calculate the total minimum cost
     Sub PartTwo(games As List(Of Game))
-        ' Variable to hold the total minimum cost
-        Dim totalMinCost As Double = 0
+    '     ' Variable to hold the total minimum cost
+    '     Dim totalMinCost As Double = 0
 
-        ' Iterate through each game
-        For Each game As Game In games
-            ' Call MovePrize before processing the game
-            game.MovePrize()
+    '     ' Iterate through each game
+    '     For Each game As Game In games
+    '         ' Call MovePrize before processing the game
+    '         game.MovePrize()
 
-            ' Get ILP data from the game
-            Dim ilpData = game.GetILPData()
-            Dim objectiveFunction As Func(Of Double, Double, Double) = ilpData.Item1
-            Dim constraintFunction As Func(Of Double, Double, Boolean) = ilpData.Item2
-            Dim maxNA As Double = ilpData.Item3
-            Dim maxNB As Double = ilpData.Item4
+    '         ' Get ILP data from the game
+    '         Dim ilpData = game.GetILPData()
+    '         Dim objectiveFunction As Func(Of Double, Double, Double) = ilpData.Item1
+    '         Dim constraintFunction As Func(Of Double, Double, Boolean) = ilpData.Item2
+    '         Dim maxNA As Double = ilpData.Item3
+    '         Dim maxNB As Double = ilpData.Item4
 
-            ' Solve the ILP for the current game
-            Dim result = ILPSolver.Solve(objectiveFunction, constraintFunction, maxNA, maxNB)
+    '         ' Solve the ILP for the current game
+    '         Dim result = ILPSolver.Solve(objectiveFunction, constraintFunction, maxNA, maxNB)
 
-            ' Add the cost of the current game to the total minimum cost
-            totalMinCost += result.Item1 * game.ButtonA.Value + result.Item2 * game.ButtonB.Value
-        Next
+    '         ' Add the cost of the current game to the total minimum cost
+    '         totalMinCost += result.Item1 * game.ButtonA.Value + result.Item2 * game.ButtonB.Value
+    '     Next
 
         ' Output the total minimum cost for Part Two
-        Console.WriteLine($"Total minimum cost across all games (Part Two): {totalMinCost}")
+        ' Console.WriteLine($"Total minimum cost across all games (Part Two): {totalMinCost}")
     End Sub
 End Module
 
