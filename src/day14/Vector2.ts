@@ -33,9 +33,17 @@ export class Vector2
 		return new Vector2(this);
 	}
 
-	public add(vec: Vector2)
+	public add(vec: Vector2 | [number, number])
 	{
-		this._x += vec.x;
-		this._y += vec.y;
+		if(vec instanceof Vector2)
+		{
+			this._x += vec.x;
+			this._y += vec.y;
+		}
+		else
+		{
+			this._x += vec[0];
+			this._y += vec[1];
+		}
 	}
 }

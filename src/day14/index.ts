@@ -2,8 +2,13 @@ import * as fs from "fs";
 import * as path from "path";
 import { Vector2 } from "./Vector2";
 import { Robot } from "./Robot";
+import { Grid } from "./Grid";
 
 const SAMPLE = false;
+const ITERATIONS = 100;
+const WIDTH = SAMPLE ? 11 : 101;
+const HEIGHT = SAMPLE ? 7 : 103;
+
 const FILE_PATH = path.join(__dirname, SAMPLE ? "input.sample.txt" : "input.txt");
 
 const fileContent = fs.readFileSync(FILE_PATH, "utf-8");
@@ -22,60 +27,41 @@ for (const line of fileContent.split("\n"))
 	);
 }
 
-const ITERATIONS = 100;
-const WIDTH = SAMPLE ? 11 : 101;
-const HEIGHT = SAMPLE ? 7 : 103;
+const greatestXVelocity = robots.reduce<number>(
+	(prev, robot) => Math.max(prev, robot.velocity.x),
+	0
+);
 
-const quadrants = [0, 0, 0, 0];
-for (let i = 0; i < ITERATIONS; i++)
+const greatestYVelocity = robots.reduce<number>(
+	(prev, robot) => Math.max(prev, robot.velocity.y),
+	0
+);
+
+console.log(`Greatest velocity values: (${greatestXVelocity},${greatestYVelocity})`);
+
+const grid = new Grid(WIDTH, HEIGHT);
+for (let i = 0; i < Number.POSITIVE_INFINITY; i++)
 {
 	for (const robot of robots)
 	{
 		robot.move();
+		robot.teleport(WIDTH, HEIGHT);
+
+		grid.addToGrid(
+			// add width/height to prevent negatives
+			(robot.position.x + WIDTH) % WIDTH,
+			(robot.position.y + HEIGHT) % HEIGHT,
+			1
+		);
 	}
+
+	if(i == ITERATIONS - 1)
+	{
+		break;
+	}
+
+	grid.reset();
 }
 
-for (const robot of robots)
-{
-	let finalX = robot.position.x;
-	while (finalX < 0) finalX += WIDTH;
-	while (finalX >= WIDTH) finalX -= WIDTH;
-
-	let finalY = robot.position.y;
-	while (finalY < 0) finalY += HEIGHT;
-	while (finalY >= HEIGHT) finalY -= HEIGHT;
-
-	if(finalX === ((WIDTH - 1) / 2) || finalY === ((HEIGHT - 1) / 2))
-	{
-		continue;
-	}
-
-	const left = finalX < (WIDTH - 1) / 2;
-	const top = finalY < (HEIGHT - 1) / 2;
-
-	if(top)
-	{
-		if(left)
-		{
-			quadrants[0] += 1;
-		}
-		else
-		{
-			quadrants[1] += 1;
-		}
-	}
-	else
-	{
-		if(left)
-		{
-			quadrants[2] += 1;
-		}
-		else
-		{
-			quadrants[3] += 1;
-		}
-	}
-}
-
-console.log(quadrants);
-console.log(quadrants[0] * quadrants[1] * quadrants[2] * quadrants[3]);
+const quadrants = grid.getQuadrants();
+console.log(quadrants.topLeft * quadrants.topRight * quadrants.bottomLeft * quadrants.bottomRight);
