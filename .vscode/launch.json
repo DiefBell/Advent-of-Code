@@ -7,9 +7,9 @@
 		{
 			"name": "TS/JS",
 			"type": "bun",
-			"internalConsoleOptions": "neverOpen",
+			"internalConsoleOptions": "openOnSessionStart",
 			"request": "launch",
-			"program": "${file}",
+			"program": "${fileDirname}/index.ts",
 			"cwd": "${workspaceFolder}",
 		},
 		{
